@@ -3,22 +3,37 @@ name: C/C++ CI
 on: pull_request
 
 jobs:
-  build:
-    runs-on: windows-2019
-    strategy:
-      matrix:
-        shared: [ON, OFF]
-        config: [Release, Debug]
+  macos_with_dep:
+    runs-on: macos-latest
+    env:
+      BUILD_DEPENDENCY_FROM_SOURCE: OFF
+      BUILD_TENSORFLOW_OPS: ON
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: true
     - name: configure
       run: |
-        mkdir build
-        cd build
-        cmake -G "Visual Studio 16 2019" -A x64 -DCMAKE_INSTALL_PREFIX="C:\Program Files\Open3D" -DBUILD_SHARED_LIBS=${{ matrix.shared }} ..
-    - name: build
-      run: |
-        cd build
-        cmake --build . --parallel 2 --config ${{ matrix.config }} --target INSTALL
+        brew update
+        brew upgrade python || true
+        ./util/scripts/install-deps-osx.sh
+        ./util/scripts/run-travis.sh
+  # windows:
+  #   runs-on: windows-2019
+  #   strategy:
+  #     matrix:
+  #       shared: [ON, OFF]
+  #       config: [Release, Debug]
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #     with:
+  #       submodules: true
+  #   - name: configure
+  #     run: |
+  #       mkdir build
+  #       cd build
+  #       cmake -G "Visual Studio 16 2019" -A x64 -DCMAKE_INSTALL_PREFIX="C:\Program Files\Open3D" -DBUILD_SHARED_LIBS=${{ matrix.shared }} ..
+  #   - name: build
+  #     run: |
+  #       cd build
+  #       cmake --build . --parallel 2 --config ${{ matrix.config }} --target INSTALL
