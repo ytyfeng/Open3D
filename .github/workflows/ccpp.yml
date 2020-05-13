@@ -8,6 +8,7 @@ jobs:
     env:
       BUILD_DEPENDENCY_FROM_SOURCE: OFF
       BUILD_TENSORFLOW_OPS: ON
+      NPROC: 2
     steps:
     - uses: actions/checkout@v2
       with:

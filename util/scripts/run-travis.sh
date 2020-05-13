@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "BUILD_DEPENDENCY_FROM_SOURCE: ${BUILD_DEPENDENCY_FROM_SOURCE}"
+echo "BUILD_TENSORFLOW_OPS: ${BUILD_TENSORFLOW_OPS}"
+echo "NPROC: ${NPROC}"
+
 python --version
 cmake --version
 echo
