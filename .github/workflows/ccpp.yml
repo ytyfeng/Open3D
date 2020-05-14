@@ -22,7 +22,7 @@ jobs:
       run: |
         brew update
         brew upgrade python || true
-        ./util/scripts/install-deps-osx.sh || true
+        ./util/scripts/install-deps-osx.sh
     - name: config_and_build
       run: |
         ./util/scripts/run-travis.sh
