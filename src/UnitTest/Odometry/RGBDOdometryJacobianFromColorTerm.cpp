@@ -103,7 +103,7 @@ TEST(RGBDOdometryJacobianFromColorTerm, ComputeJacobianAndResidual) {
                 intrinsic, extrinsic, corresps);
 
         EXPECT_NEAR(ref_r[row], r[0], THRESHOLD_1E_6);
-        ExpectEQ(ref_J_r[row], J_r[0]);
+        ExpectNear(ref_J_r[row], J_r[0]);
     }
 }
 

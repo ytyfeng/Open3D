@@ -55,8 +55,8 @@ TEST(Image, DefaultConstructor) {
     EXPECT_TRUE(image.IsEmpty());
     EXPECT_FALSE(image.HasData());
 
-    ExpectEQ(Zero2d, image.GetMinBound());
-    ExpectEQ(Zero2d, image.GetMaxBound());
+    ExpectNear(Eigen::Vector2d(0, 0), image.GetMinBound());
+    ExpectNear(Eigen::Vector2d(0, 0), image.GetMaxBound());
 
     EXPECT_FALSE(image.TestImageBoundary(0, 0));
     EXPECT_EQ(0, image.BytesPerLine());
@@ -87,8 +87,8 @@ TEST(Image, CreateImage) {
     EXPECT_FALSE(image.IsEmpty());
     EXPECT_TRUE(image.HasData());
 
-    ExpectEQ(Zero2d, image.GetMinBound());
-    ExpectEQ(Eigen::Vector2d(width, height), image.GetMaxBound());
+    ExpectNear(Eigen::Vector2d(0, 0), image.GetMinBound());
+    ExpectNear(Eigen::Vector2d(width, height), image.GetMaxBound());
 
     EXPECT_TRUE(image.TestImageBoundary(0, 0));
     EXPECT_EQ(width * num_of_channels * bytes_per_channel,
@@ -121,8 +121,8 @@ TEST(Image, Clear) {
     EXPECT_TRUE(image.IsEmpty());
     EXPECT_FALSE(image.HasData());
 
-    ExpectEQ(Zero2d, image.GetMinBound());
-    ExpectEQ(Zero2d, image.GetMaxBound());
+    ExpectNear(Eigen::Vector2d(0, 0), image.GetMinBound());
+    ExpectNear(Eigen::Vector2d(0, 0), image.GetMaxBound());
 
     EXPECT_FALSE(image.TestImageBoundary(0, 0));
     EXPECT_EQ(0, image.BytesPerLine());
@@ -251,7 +251,7 @@ void TEST_CreateFloatImage(
     EXPECT_EQ(height, float_image->height_);
     EXPECT_EQ(float_num_of_channels, float_image->num_of_channels_);
     EXPECT_EQ(int(sizeof(float)), float_image->bytes_per_channel_);
-    ExpectEQ(ref, float_image->data_);
+    ExpectNear(ref, float_image->data_);
 }
 
 // ----------------------------------------------------------------------------
@@ -494,7 +494,7 @@ TEST(Image, ConvertDepthToFloatImage) {
     EXPECT_EQ(height, float_image->height_);
     EXPECT_EQ(float_num_of_channels, float_image->num_of_channels_);
     EXPECT_EQ(int(sizeof(float)), float_image->bytes_per_channel_);
-    ExpectEQ(ref, float_image->data_);
+    ExpectNear(ref, float_image->data_);
 }
 
 TEST(Image, TransposeUint8) {
@@ -531,7 +531,7 @@ TEST(Image, TransposeUint8) {
     EXPECT_EQ(width, transposed_image->height_);
     EXPECT_EQ(num_of_channels, transposed_image->num_of_channels_);
     EXPECT_EQ(int(sizeof(uint8_t)), transposed_image->bytes_per_channel_);
-    ExpectEQ(transposed_ref, transposed_image->data_);
+    ExpectNear(transposed_ref, transposed_image->data_);
 }
 
 TEST(Image, TransposeFloat) {
@@ -574,7 +574,7 @@ TEST(Image, TransposeFloat) {
     std::vector<float> transpose_image_data(
             transpose_image_floats,
             transpose_image_floats + transposed_ref.size());
-    ExpectEQ(transposed_ref, transpose_image_data);
+    ExpectNear(transposed_ref, transpose_image_data);
 }
 
 TEST(Image, FlipVerticalImage) {
@@ -608,7 +608,7 @@ TEST(Image, FlipVerticalImage) {
     EXPECT_EQ(height, flip_image->height_);
     EXPECT_EQ(num_of_channels, flip_image->num_of_channels_);
     EXPECT_EQ(int(sizeof(uint8_t)), flip_image->bytes_per_channel_);
-    ExpectEQ(flipped, flip_image->data_);
+    ExpectNear(flipped, flip_image->data_);
 }
 
 TEST(Image, FlipHorizontalImage) {
@@ -642,7 +642,7 @@ TEST(Image, FlipHorizontalImage) {
     EXPECT_EQ(height, flip_image->height_);
     EXPECT_EQ(num_of_channels, flip_image->num_of_channels_);
     EXPECT_EQ(int(sizeof(uint8_t)), flip_image->bytes_per_channel_);
-    ExpectEQ(flipped, flip_image->data_);
+    ExpectNear(flipped, flip_image->data_);
 }
 
 // ----------------------------------------------------------------------------
@@ -674,7 +674,7 @@ void TEST_Filter(const std::vector<uint8_t>& ref,
     EXPECT_EQ(height, output->height_);
     EXPECT_EQ(num_of_channels, output->num_of_channels_);
     EXPECT_EQ(bytes_per_channel, output->bytes_per_channel_);
-    ExpectEQ(ref, output->data_);
+    ExpectNear(ref, output->data_);
 }
 
 TEST(Image, Filter_Gaussian3) {
@@ -787,7 +787,7 @@ TEST(Image, FilterHorizontal) {
     EXPECT_EQ(height, output->height_);
     EXPECT_EQ(num_of_channels, output->num_of_channels_);
     EXPECT_EQ(bytes_per_channel, output->bytes_per_channel_);
-    ExpectEQ(ref, output->data_);
+    ExpectNear(ref, output->data_);
 }
 
 TEST(Image, Downsample) {
@@ -816,7 +816,7 @@ TEST(Image, Downsample) {
     EXPECT_EQ((int)(height / 2), output->height_);
     EXPECT_EQ(num_of_channels, output->num_of_channels_);
     EXPECT_EQ(bytes_per_channel, output->bytes_per_channel_);
-    ExpectEQ(ref, output->data_);
+    ExpectNear(ref, output->data_);
 }
 
 TEST(Image, Dilate) {
@@ -852,7 +852,7 @@ TEST(Image, Dilate) {
     EXPECT_EQ(height, output->height_);
     EXPECT_EQ(num_of_channels, output->num_of_channels_);
     EXPECT_EQ(bytes_per_channel, output->bytes_per_channel_);
-    ExpectEQ(ref, output->data_);
+    ExpectNear(ref, output->data_);
 }
 
 TEST(Image, LinearTransform) {
@@ -888,7 +888,7 @@ TEST(Image, LinearTransform) {
     EXPECT_EQ(height, output->height_);
     EXPECT_EQ(num_of_channels, output->num_of_channels_);
     EXPECT_EQ(bytes_per_channel, output->bytes_per_channel_);
-    ExpectEQ(ref, output->data_);
+    ExpectNear(ref, output->data_);
 }
 
 TEST(Image, ClipIntensity) {
@@ -924,7 +924,7 @@ TEST(Image, ClipIntensity) {
     EXPECT_EQ(height, output->height_);
     EXPECT_EQ(num_of_channels, output->num_of_channels_);
     EXPECT_EQ(bytes_per_channel, output->bytes_per_channel_);
-    ExpectEQ(ref, output->data_);
+    ExpectNear(ref, output->data_);
 }
 
 // ----------------------------------------------------------------------------
@@ -953,7 +953,7 @@ void TEST_CreateImageFromFloatImage() {
     EXPECT_EQ(height, output->height_);
     EXPECT_EQ(num_of_channels, output->num_of_channels_);
     EXPECT_EQ(bytes_per_channel, output->bytes_per_channel_);
-    ExpectEQ(image.data_, output->data_);
+    ExpectNear(image.data_, output->data_);
 }
 
 template void TEST_CreateImageFromFloatImage<uint8_t>();
@@ -1023,7 +1023,7 @@ TEST(Image, FilterPyramid) {
         EXPECT_EQ(input->height_, output->height_);
         EXPECT_EQ(input->num_of_channels_, output->num_of_channels_);
         EXPECT_EQ(input->bytes_per_channel_, output->bytes_per_channel_);
-        ExpectEQ(ref[p], output->data_);
+        ExpectNear(ref[p], output->data_);
     }
 }
 
@@ -1073,7 +1073,7 @@ TEST(Image, CreatePyramid) {
         EXPECT_EQ(expected_height, output->height_);
         EXPECT_EQ(num_of_channels, output->num_of_channels_);
         EXPECT_EQ(bytes_per_channel, output->bytes_per_channel_);
-        ExpectEQ(ref[p], output->data_);
+        ExpectNear(ref[p], output->data_);
 
         expected_width /= 2;
         expected_height /= 2;

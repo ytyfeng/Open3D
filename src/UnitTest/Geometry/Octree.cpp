@@ -40,13 +40,13 @@ namespace unit_test {
 
 TEST(Octree, ConstructorWithoutSize) {
     geometry::Octree octree(10);
-    ExpectEQ(octree.origin_, Eigen::Vector3d(0, 0, 0));
+    ExpectNear(octree.origin_, Eigen::Vector3d(0, 0, 0));
     EXPECT_EQ(octree.size_, 0);
 }
 
 TEST(Octree, ConstructorWithSize) {
     geometry::Octree octree(0, Eigen::Vector3d(-1, -1, -1), 2);
-    ExpectEQ(octree.origin_, Eigen::Vector3d(-1, -1, -1));
+    ExpectNear(octree.origin_, Eigen::Vector3d(-1, -1, -1));
     EXPECT_EQ(octree.size_, 2);
 }
 
@@ -60,7 +60,7 @@ TEST(Octree, ZeroDepth) {
     if (auto leaf_node =
                 std::dynamic_pointer_cast<geometry::OctreeColorLeafNode>(
                         octree.root_node_)) {
-        ExpectEQ(leaf_node->color_, color);
+        ExpectNear(leaf_node->color_, color);
     } else {
         throw std::runtime_error("Leaf node must be OctreeColorLeafNode");
     }
@@ -84,7 +84,7 @@ TEST(Octree, ZeroDepthOutOfBound) {
     if (auto leaf_node =
                 std::dynamic_pointer_cast<geometry::OctreeColorLeafNode>(
                         octree.root_node_)) {
-        ExpectEQ(leaf_node->color_, color_in);
+        ExpectNear(leaf_node->color_, color_in);
     } else {
         throw std::runtime_error("Leaf node must be OctreeColorLeafNode");
     }
@@ -104,7 +104,7 @@ TEST(Octree, ZeroDepthValueOverwrite) {
     if (auto leaf_node =
                 std::dynamic_pointer_cast<geometry::OctreeColorLeafNode>(
                         octree.root_node_)) {
-        ExpectEQ(leaf_node->color_, color_old);
+        ExpectNear(leaf_node->color_, color_old);
     } else {
         throw std::runtime_error("Leaf node must be OctreeLeafNode");
     }
@@ -115,7 +115,7 @@ TEST(Octree, ZeroDepthValueOverwrite) {
     if (auto leaf_node =
                 std::dynamic_pointer_cast<geometry::OctreeColorLeafNode>(
                         octree.root_node_)) {
-        ExpectEQ(leaf_node->color_, color_new);
+        ExpectNear(leaf_node->color_, color_new);
     } else {
         throw std::runtime_error("Leaf node must be OctreeLeafNode");
     }
@@ -143,7 +143,7 @@ TEST(Octree, EightCubes) {
     }
 
     // Check dimensions
-    ExpectEQ(octree.origin_, Eigen::Vector3d(0, 0, 0));
+    ExpectNear(octree.origin_, Eigen::Vector3d(0, 0, 0));
     EXPECT_EQ(octree.size_, 2);
 
     // Check node values
@@ -154,7 +154,7 @@ TEST(Octree, EightCubes) {
             if (auto leaf_node = std::dynamic_pointer_cast<
                         geometry::OctreeColorLeafNode>(
                         root_node->children_[i])) {
-                ExpectEQ(leaf_node->color_, colors[i]);
+                ExpectNear(leaf_node->color_, colors[i]);
             } else {
                 throw std::runtime_error(
                         "Leaf node must be OctreeColorLeafNode");
@@ -207,7 +207,7 @@ TEST(Octree, EightCubesTraverse) {
     octree_1.Traverse(f);
     EXPECT_EQ(colors_traversed.size(), 8u);
     for (size_t i = 0; i < 8; ++i) {
-        ExpectEQ(colors_traversed[i], colors[i]);
+        ExpectNear(colors_traversed[i], colors[i]);
     }
     for (size_t i = 0; i < 8; ++i) {
         EXPECT_EQ(child_indices_traversed[i], i);
@@ -224,7 +224,7 @@ TEST(Octree, EightCubesTraverse) {
     child_indices_traversed.clear();
     octree_5.Traverse(f);
     EXPECT_EQ(colors_traversed.size(), 8u);
-    ExpectEQ(colors_traversed, colors);
+    ExpectNear(colors_traversed, colors);
 }
 
 TEST(Octree, FragmentPLYCheckClone) {
@@ -274,7 +274,7 @@ TEST(Octree, ConvertFromPointCloudBoundSinglePoint) {
     pcd.points_.push_back(Eigen::Vector3d(0, 0, 0));
     pcd.colors_.push_back(Eigen::Vector3d(0, 0.1, 0.2));
     octree.ConvertFromPointCloud(pcd, 0.01);
-    ExpectEQ(octree.origin_, Eigen::Vector3d(0, 0, 0));
+    ExpectNear(octree.origin_, Eigen::Vector3d(0, 0, 0));
     EXPECT_EQ(octree.size_, 0.01);
 }
 
@@ -286,7 +286,7 @@ TEST(Octree, ConvertFromPointCloudBoundTwoPoints) {
     pcd.colors_.push_back(Eigen::Vector3d(0, 0.1, 0.2));
     pcd.colors_.push_back(Eigen::Vector3d(0.3, 0.4, 0.5));
     octree.ConvertFromPointCloud(pcd, 0.01);
-    ExpectEQ(octree.origin_, Eigen::Vector3d(-2, -1, 0));  // Auto-centered
+    ExpectNear(octree.origin_, Eigen::Vector3d(-2, -1, 0));  // Auto-centered
     EXPECT_EQ(octree.size_, 4.04);  // 4.04 = 4 * (1 + 0.01)
 }
 

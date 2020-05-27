@@ -40,25 +40,25 @@ TEST(VoxelGrid, Bounds) {
     voxel_grid->AddVoxel(geometry::Voxel(Eigen::Vector3i(1, 0, 0)));
     voxel_grid->AddVoxel(geometry::Voxel(Eigen::Vector3i(0, 2, 0)));
     voxel_grid->AddVoxel(geometry::Voxel(Eigen::Vector3i(0, 0, 3)));
-    ExpectEQ(voxel_grid->GetMinBound(), Eigen::Vector3d(0, 0, 0));
-    ExpectEQ(voxel_grid->GetMaxBound(), Eigen::Vector3d(10, 15, 20));
+    ExpectNear(voxel_grid->GetMinBound(), Eigen::Vector3d(0, 0, 0));
+    ExpectNear(voxel_grid->GetMaxBound(), Eigen::Vector3d(10, 15, 20));
 }
 
 TEST(VoxelGrid, GetVoxel) {
     auto voxel_grid = std::make_shared<geometry::VoxelGrid>();
     voxel_grid->origin_ = Eigen::Vector3d(0, 0, 0);
     voxel_grid->voxel_size_ = 5;
-    ExpectEQ(voxel_grid->GetVoxel(Eigen::Vector3d(0, 0, 0)),
-             Eigen::Vector3i(0, 0, 0));
-    ExpectEQ(voxel_grid->GetVoxel(Eigen::Vector3d(0, 1, 0)),
-             Eigen::Vector3i(0, 0, 0));
+    ExpectNear(voxel_grid->GetVoxel(Eigen::Vector3d(0, 0, 0)),
+               Eigen::Vector3i(0, 0, 0));
+    ExpectNear(voxel_grid->GetVoxel(Eigen::Vector3d(0, 1, 0)),
+               Eigen::Vector3i(0, 0, 0));
     // Test near boundary voxel_size_ == 5
-    ExpectEQ(voxel_grid->GetVoxel(Eigen::Vector3d(0, 4.9, 0)),
-             Eigen::Vector3i(0, 0, 0));
-    ExpectEQ(voxel_grid->GetVoxel(Eigen::Vector3d(0, 5, 0)),
-             Eigen::Vector3i(0, 1, 0));
-    ExpectEQ(voxel_grid->GetVoxel(Eigen::Vector3d(0, 5.1, 0)),
-             Eigen::Vector3i(0, 1, 0));
+    ExpectNear(voxel_grid->GetVoxel(Eigen::Vector3d(0, 4.9, 0)),
+               Eigen::Vector3i(0, 0, 0));
+    ExpectNear(voxel_grid->GetVoxel(Eigen::Vector3d(0, 5, 0)),
+               Eigen::Vector3i(0, 1, 0));
+    ExpectNear(voxel_grid->GetVoxel(Eigen::Vector3d(0, 5.1, 0)),
+               Eigen::Vector3i(0, 1, 0));
 }
 
 TEST(VoxelGrid, Visualization) {

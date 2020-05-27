@@ -47,13 +47,13 @@ TEST(ColorMapOptimizationOption, DISABLED_Constructor) {
     // EXPECT_EQ(3, option.half_dilation_kernel_size_for_discontinuity_map_);
 
     // EXPECT_NEAR(0.316, option.non_rigid_anchor_point_weight_,
-    // unit_test::THRESHOLD_1E_6); EXPECT_NEAR(300, option.maximum_iteration_,
-    // unit_test::THRESHOLD_1E_6); EXPECT_NEAR(2.5,
-    // option.maximum_allowable_depth_, unit_test::THRESHOLD_1E_6);
+    // THRESHOLD_1E_6); EXPECT_NEAR(300, option.maximum_iteration_,
+    // THRESHOLD_1E_6); EXPECT_NEAR(2.5,
+    // option.maximum_allowable_depth_, THRESHOLD_1E_6);
     // EXPECT_NEAR(0.03, option.depth_threshold_for_visibility_check_,
-    // unit_test::THRESHOLD_1E_6); EXPECT_NEAR(0.1,
+    // THRESHOLD_1E_6); EXPECT_NEAR(0.1,
     // option.depth_threshold_for_discontinuity_check_,
-    // unit_test::THRESHOLD_1E_6);
+    // THRESHOLD_1E_6);
 }
 
 }  // namespace unit_test

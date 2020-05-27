@@ -59,8 +59,8 @@ TEST(VoxelGridIO, PLYWriteRead) {
         const auto &src_voxel = src_it.second;
         const auto &src_i = src_voxel.grid_index_;
         const auto &src_c = src_voxel.color_;
-        ExpectEQ(src_i, dst_voxel_grid->voxels_[src_i].grid_index_);
-        ExpectEQ(
+        ExpectNear(src_i, dst_voxel_grid->voxels_[src_i].grid_index_);
+        ExpectNear(
                 Eigen::Vector3d((src_c * 255.0).cast<uint8_t>().cast<double>()),
                 Eigen::Vector3d((dst_voxel_grid->voxels_[src_i].color_ * 255.0)
                                         .cast<uint8_t>()

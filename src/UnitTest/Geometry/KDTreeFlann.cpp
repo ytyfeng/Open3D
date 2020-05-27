@@ -67,8 +67,8 @@ TEST(KDTreeFlann, SearchKNN) {
 
     EXPECT_EQ(result, 30);
 
-    ExpectEQ(ref_indices, indices);
-    ExpectEQ(ref_distance2, distance2);
+    ExpectNear(ref_indices, indices);
+    ExpectNear(ref_distance2, distance2);
 }
 
 TEST(KDTreeFlann, SearchRadius) {
@@ -103,8 +103,8 @@ TEST(KDTreeFlann, SearchRadius) {
 
     EXPECT_EQ(result, 21);
 
-    ExpectEQ(ref_indices, indices);
-    ExpectEQ(ref_distance2, distance2);
+    ExpectNear(ref_indices, indices);
+    ExpectNear(ref_distance2, distance2);
 }
 
 TEST(KDTreeFlann, SearchHybrid) {
@@ -139,8 +139,8 @@ TEST(KDTreeFlann, SearchHybrid) {
 
     EXPECT_EQ(result, 15);
 
-    ExpectEQ(ref_indices, indices);
-    ExpectEQ(ref_distance2, distance2);
+    ExpectNear(ref_indices, indices);
+    ExpectNear(ref_distance2, distance2);
 }
 
 }  // namespace unit_test

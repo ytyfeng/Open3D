@@ -123,8 +123,8 @@ TEST(RGBDOdometryJacobianFromHybridTerm, ComputeJacobianAndResidual) {
         EXPECT_NEAR(ref_r[2 * row + 0], r[0], THRESHOLD_1E_6);
         EXPECT_NEAR(ref_r[2 * row + 1], r[1], THRESHOLD_1E_6);
 
-        ExpectEQ(ref_J_r[2 * row + 0], J_r[0]);
-        ExpectEQ(ref_J_r[2 * row + 1], J_r[1]);
+        ExpectNear(ref_J_r[2 * row + 0], J_r[0]);
+        ExpectNear(ref_J_r[2 * row + 1], J_r[1]);
     }
 }
 

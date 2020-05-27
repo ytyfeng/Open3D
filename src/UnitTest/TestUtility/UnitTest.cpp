@@ -1,6 +1,3 @@
-// ----------------------------------------------------------------------------
-// -                        Open3D: www.open3d.org                            -
-// ----------------------------------------------------------------------------
 // The MIT License (MIT)
 //
 // Copyright (c) 2018 www.open3d.org
@@ -32,9 +29,6 @@
 namespace open3d {
 namespace unit_test {
 
-// ----------------------------------------------------------------------------
-// Default message to use for tests missing an implementation.
-// ----------------------------------------------------------------------------
 void NotImplemented() {
     std::cout << "\033[0;32m"
               << "[          ] "
@@ -46,76 +40,57 @@ void NotImplemented() {
     GTEST_NONFATAL_FAILURE_("Not implemented");
 }
 
-// ----------------------------------------------------------------------------
-// Test equality of two arrays of uint8_t.
-// ----------------------------------------------------------------------------
-void ExpectEQ(const uint8_t* const v0,
-              const uint8_t* const v1,
-              const size_t& size) {
+void ExpectNear(const uint8_t* const v0,
+                const uint8_t* const v1,
+                const size_t& size) {
     for (size_t i = 0; i < size; i++) EXPECT_EQ(v0[i], v1[i]);
 }
 
-// ----------------------------------------------------------------------------
-// Test equality of two vectors of uint8_t.
-// ----------------------------------------------------------------------------
-void ExpectEQ(const std::vector<uint8_t>& v0, const std::vector<uint8_t>& v1) {
+void ExpectNear(const std::vector<uint8_t>& v0,
+                const std::vector<uint8_t>& v1) {
     EXPECT_EQ(v0.size(), v1.size());
-    ExpectEQ(v0.data(), v1.data(), v0.size());
+    ExpectNear(v0.data(), v1.data(), v0.size());
 }
 
-// ----------------------------------------------------------------------------
-// Test equality of two arrays of int.
-// ----------------------------------------------------------------------------
-void ExpectEQ(const int* const v0, const int* const v1, const size_t& size) {
+void ExpectNear(const int* const v0, const int* const v1, const size_t& size) {
     for (size_t i = 0; i < size; i++) EXPECT_EQ(v0[i], v1[i]);
 }
 
-// ----------------------------------------------------------------------------
-// Test equality of two vectors of int.
-// ----------------------------------------------------------------------------
-void ExpectEQ(const std::vector<int>& v0, const std::vector<int>& v1) {
+void ExpectNear(const std::vector<int>& v0, const std::vector<int>& v1) {
     EXPECT_EQ(v0.size(), v1.size());
-    ExpectEQ(v0.data(), v1.data(), v0.size());
+    ExpectNear(v0.data(), v1.data(), v0.size());
 }
 
-// ----------------------------------------------------------------------------
-// Test equality of two arrays of float.
-// ----------------------------------------------------------------------------
-void ExpectEQ(const float* const v0,
-              const float* const v1,
-              const size_t& size,
-              float threshold) {
-    for (size_t i = 0; i < size; i++) EXPECT_NEAR(v0[i], v1[i], threshold);
+void ExpectNear(const float* const v0,
+                const float* const v1,
+                const size_t& size,
+                float threshold) {
+    for (size_t i = 0; i < size; i++) {
+        EXPECT_NEAR(v0[i], v1[i], threshold);
+    }
 }
 
-// ----------------------------------------------------------------------------
-// Test equality of two vectors of float.
-// ----------------------------------------------------------------------------
-void ExpectEQ(const std::vector<float>& v0,
-              const std::vector<float>& v1,
-              float threshold) {
+void ExpectNear(const std::vector<float>& v0,
+                const std::vector<float>& v1,
+                float threshold) {
     EXPECT_EQ(v0.size(), v1.size());
-    ExpectEQ(v0.data(), v1.data(), v0.size(), threshold);
+    ExpectNear(v0.data(), v1.data(), v0.size(), threshold);
 }
 
-// ----------------------------------------------------------------------------
-// Test equality of two arrays of double.
-// ----------------------------------------------------------------------------
-void ExpectEQ(const double* const v0,
-              const double* const v1,
-              const size_t& size,
-              double threshold) {
-    for (size_t i = 0; i < size; i++) EXPECT_NEAR(v0[i], v1[i], threshold);
+void ExpectNear(const double* const v0,
+                const double* const v1,
+                const size_t& size,
+                double threshold) {
+    for (size_t i = 0; i < size; i++) {
+        EXPECT_NEAR(v0[i], v1[i], threshold);
+    }
 }
 
-// ----------------------------------------------------------------------------
-// Test equality of two vectors of double.
-// ----------------------------------------------------------------------------
-void ExpectEQ(const std::vector<double>& v0,
-              const std::vector<double>& v1,
-              double threshold) {
+void ExpectNear(const std::vector<double>& v0,
+                const std::vector<double>& v1,
+                double threshold) {
     EXPECT_EQ(v0.size(), v1.size());
-    ExpectEQ(v0.data(), v1.data(), v0.size(), threshold);
+    ExpectNear(v0.data(), v1.data(), v0.size(), threshold);
 }
 
 }  // namespace unit_test

@@ -255,8 +255,8 @@ void assert_ordreded_edges(
 void assert_same_vertices_and_triangles(
         const geometry::TriangleMesh& mesh,
         const geometry::HalfEdgeTriangleMesh& het_mesh) {
-    unit_test::ExpectEQ(mesh.vertices_, het_mesh.vertices_);
-    unit_test::ExpectEQ(mesh.triangles_, het_mesh.triangles_);
+    ExpectNear(mesh.vertices_, het_mesh.vertices_);
+    ExpectNear(mesh.triangles_, het_mesh.triangles_);
 }
 
 TEST(HalfEdgeTriangleMesh, Constructor_TwoTriangles) {
@@ -415,10 +415,10 @@ TEST(HalfEdgeTriangleMesh, BoundaryVerticesFromVertex_TwoTriangles) {
     EXPECT_FALSE(het_mesh->IsEmpty());
     assert_same_vertices_and_triangles(mesh, *het_mesh);
 
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(0), {0, 2, 3, 1});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(1), {1, 0, 2, 3});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(2), {2, 3, 1, 0});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(3), {3, 1, 0, 2});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(0), {0, 2, 3, 1});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(1), {1, 0, 2, 3});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(2), {2, 3, 1, 0});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(3), {3, 1, 0, 2});
 }
 
 TEST(HalfEdgeTriangleMesh, BoundaryVerticesFromVertex_Hexagon) {
@@ -428,14 +428,14 @@ TEST(HalfEdgeTriangleMesh, BoundaryVerticesFromVertex_Hexagon) {
     EXPECT_FALSE(het_mesh->IsEmpty());
     assert_same_vertices_and_triangles(mesh, *het_mesh);
 
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(0), {0, 2, 5, 6, 4, 1});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(1), {1, 0, 2, 5, 6, 4});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(2), {2, 5, 6, 4, 1, 0});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(0), {0, 2, 5, 6, 4, 1});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(1), {1, 0, 2, 5, 6, 4});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(2), {2, 5, 6, 4, 1, 0});
     EXPECT_THROW(het_mesh->BoundaryVerticesFromVertex(3),
                  std::runtime_error);  // Vertex 3 is not a boundary, thus empty
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(4), {4, 1, 0, 2, 5, 6});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(5), {5, 6, 4, 1, 0, 2});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(6), {6, 4, 1, 0, 2, 5});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(4), {4, 1, 0, 2, 5, 6});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(5), {5, 6, 4, 1, 0, 2});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(6), {6, 4, 1, 0, 2, 5});
 }
 
 TEST(HalfEdgeTriangleMesh, BoundaryVerticesFromVertex_PartialHexagon) {
@@ -445,13 +445,13 @@ TEST(HalfEdgeTriangleMesh, BoundaryVerticesFromVertex_PartialHexagon) {
     EXPECT_FALSE(het_mesh->IsEmpty());
     assert_same_vertices_and_triangles(mesh, *het_mesh);
 
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(0), {0, 2, 5, 6, 3, 4, 1});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(1), {1, 0, 2, 5, 6, 3, 4});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(2), {2, 5, 6, 3, 4, 1, 0});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(3), {3, 4, 1, 0, 2, 5, 6});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(4), {4, 1, 0, 2, 5, 6, 3});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(5), {5, 6, 3, 4, 1, 0, 2});
-    ExpectEQ(het_mesh->BoundaryVerticesFromVertex(6), {6, 3, 4, 1, 0, 2, 5});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(0), {0, 2, 5, 6, 3, 4, 1});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(1), {1, 0, 2, 5, 6, 3, 4});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(2), {2, 5, 6, 3, 4, 1, 0});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(3), {3, 4, 1, 0, 2, 5, 6});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(4), {4, 1, 0, 2, 5, 6, 3});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(5), {5, 6, 3, 4, 1, 0, 2});
+    ExpectNear(het_mesh->BoundaryVerticesFromVertex(6), {6, 3, 4, 1, 0, 2, 5});
 }
 
 TEST(HalfEdgeTriangleMesh, GetBoundaries_TwoTriangles) {

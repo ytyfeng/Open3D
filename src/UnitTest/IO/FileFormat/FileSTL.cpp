@@ -42,8 +42,8 @@ TEST(FileSTL, WriteReadTriangleMeshFromSTL) {
     geometry::TriangleMesh tm_test;
     io::ReadTriangleMesh("tmp.stl", tm_test, false);
 
-    ExpectEQ(tm_gt.vertices_, tm_test.vertices_);
-    ExpectEQ(tm_gt.triangles_, tm_test.triangles_);
+    ExpectNear(tm_gt.vertices_, tm_test.vertices_);
+    ExpectNear(tm_gt.triangles_, tm_test.triangles_);
 }
 
 }  // namespace unit_test

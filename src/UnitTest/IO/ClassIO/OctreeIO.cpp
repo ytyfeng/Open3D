@@ -54,7 +54,7 @@ void WriteReadAndAssertEqual(const geometry::Octree& src_octree,
 
 TEST(OctreeIO, EmptyTree) {
     geometry::Octree octree(10);
-    ExpectEQ(octree.origin_, Eigen::Vector3d(0, 0, 0));
+    ExpectNear(octree.origin_, Eigen::Vector3d(0, 0, 0));
     EXPECT_EQ(octree.size_, 0);
 
     WriteReadAndAssertEqual(octree);

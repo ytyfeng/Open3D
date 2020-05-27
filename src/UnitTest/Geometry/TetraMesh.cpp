@@ -48,8 +48,8 @@ TEST(TetraMesh, Constructor) {
     // public members
     EXPECT_TRUE(tm.IsEmpty());
 
-    ExpectEQ(Zero3d, tm.GetMinBound());
-    ExpectEQ(Zero3d, tm.GetMaxBound());
+    ExpectNear(Eigen::Vector3d(0, 0, 0), tm.GetMinBound());
+    ExpectNear(Eigen::Vector3d(0, 0, 0), tm.GetMaxBound());
 
     EXPECT_FALSE(tm.HasVertices());
     EXPECT_FALSE(tm.HasTetras());
@@ -76,9 +76,9 @@ TEST(TetraMesh, Clear) {
 
     EXPECT_FALSE(tm.IsEmpty());
 
-    ExpectEQ(Eigen::Vector3d(19.607843, 0.0, 0.0), tm.GetMinBound());
-    ExpectEQ(Eigen::Vector3d(996.078431, 996.078431, 996.078431),
-             tm.GetMaxBound());
+    ExpectNear(Eigen::Vector3d(19.607843, 0.0, 0.0), tm.GetMinBound());
+    ExpectNear(Eigen::Vector3d(996.078431, 996.078431, 996.078431),
+               tm.GetMaxBound());
 
     EXPECT_TRUE(tm.HasVertices());
     EXPECT_TRUE(tm.HasTetras());
@@ -88,8 +88,8 @@ TEST(TetraMesh, Clear) {
     // public members
     EXPECT_TRUE(tm.IsEmpty());
 
-    ExpectEQ(Zero3d, tm.GetMinBound());
-    ExpectEQ(Zero3d, tm.GetMaxBound());
+    ExpectNear(Eigen::Vector3d(0, 0, 0), tm.GetMinBound());
+    ExpectNear(Eigen::Vector3d(0, 0, 0), tm.GetMaxBound());
 
     EXPECT_FALSE(tm.HasVertices());
     EXPECT_FALSE(tm.HasTetras());
@@ -118,7 +118,7 @@ TEST(TetraMesh, GetMinBound) {
     tm.vertices_.resize(size);
     Rand(tm.vertices_, dmin, dmax, 0);
 
-    ExpectEQ(Eigen::Vector3d(19.607843, 0.0, 0.0), tm.GetMinBound());
+    ExpectNear(Eigen::Vector3d(19.607843, 0.0, 0.0), tm.GetMinBound());
 }
 
 TEST(TetraMesh, GetMaxBound) {
@@ -132,8 +132,8 @@ TEST(TetraMesh, GetMaxBound) {
     tm.vertices_.resize(size);
     Rand(tm.vertices_, dmin, dmax, 0);
 
-    ExpectEQ(Eigen::Vector3d(996.078431, 996.078431, 996.078431),
-             tm.GetMaxBound());
+    ExpectNear(Eigen::Vector3d(996.078431, 996.078431, 996.078431),
+               tm.GetMaxBound());
 }
 
 TEST(TetraMesh, Transform) {
@@ -161,7 +161,7 @@ TEST(TetraMesh, Transform) {
 
     tm.Transform(transformation);
 
-    ExpectEQ(ref_vertices, tm.vertices_);
+    ExpectNear(ref_vertices, tm.vertices_);
 }
 
 TEST(TetraMesh, OperatorAppend) {
@@ -193,18 +193,18 @@ TEST(TetraMesh, OperatorAppend) {
 
     EXPECT_EQ(2 * size, tm.vertices_.size());
     for (size_t i = 0; i < size; i++) {
-        ExpectEQ(tm0.vertices_[i], tm.vertices_[i + 0]);
-        ExpectEQ(tm1.vertices_[i], tm.vertices_[i + size]);
+        ExpectNear(tm0.vertices_[i], tm.vertices_[i + 0]);
+        ExpectNear(tm1.vertices_[i], tm.vertices_[i + size]);
     }
 
     EXPECT_EQ(2 * size, tm.tetras_.size());
     for (size_t i = 0; i < size; i++) {
-        ExpectEQ(tm0.tetras_[i], tm.tetras_[i + 0]);
-        ExpectEQ(Eigen::Vector4i(tm1.tetras_[i](0, 0) + size,
-                                 tm1.tetras_[i](1, 0) + size,
-                                 tm1.tetras_[i](2, 0) + size,
-                                 tm1.tetras_[i](3, 0) + size),
-                 tm.tetras_[i + size]);
+        ExpectNear(tm0.tetras_[i], tm.tetras_[i + 0]);
+        ExpectNear(Eigen::Vector4i(tm1.tetras_[i](0, 0) + size,
+                                   tm1.tetras_[i](1, 0) + size,
+                                   tm1.tetras_[i](2, 0) + size,
+                                   tm1.tetras_[i](3, 0) + size),
+                   tm.tetras_[i + size]);
     }
 }
 
@@ -236,18 +236,18 @@ TEST(TetraMesh, OperatorADD) {
 
     EXPECT_EQ(2 * size, tm.vertices_.size());
     for (size_t i = 0; i < size; i++) {
-        ExpectEQ(tm0.vertices_[i], tm.vertices_[i + 0]);
-        ExpectEQ(tm1.vertices_[i], tm.vertices_[i + size]);
+        ExpectNear(tm0.vertices_[i], tm.vertices_[i + 0]);
+        ExpectNear(tm1.vertices_[i], tm.vertices_[i + size]);
     }
 
     EXPECT_EQ(2 * size, tm.tetras_.size());
     for (size_t i = 0; i < size; i++) {
-        ExpectEQ(tm0.tetras_[i], tm.tetras_[i + 0]);
-        ExpectEQ(Eigen::Vector4i(tm1.tetras_[i](0, 0) + size,
-                                 tm1.tetras_[i](1, 0) + size,
-                                 tm1.tetras_[i](2, 0) + size,
-                                 tm1.tetras_[i](3, 0) + size),
-                 tm.tetras_[i + size]);
+        ExpectNear(tm0.tetras_[i], tm.tetras_[i + 0]);
+        ExpectNear(Eigen::Vector4i(tm1.tetras_[i](0, 0) + size,
+                                   tm1.tetras_[i](1, 0) + size,
+                                   tm1.tetras_[i](2, 0) + size,
+                                   tm1.tetras_[i](3, 0) + size),
+                   tm.tetras_[i + size]);
     }
 }
 
@@ -290,7 +290,7 @@ TEST(TetraMesh, Purge) {
             {2, 6, 3, 4}, {0, 2, 3, 4}, {1, 2, 3, 4}, {3, 4, 5, 6}, {4, 5, 6, 6}
 
     };
-    ExpectEQ(ref_tetras_after_tetra_duplicate_removal, tm.tetras_);
+    ExpectNear(ref_tetras_after_tetra_duplicate_removal, tm.tetras_);
 
     tm.RemoveDuplicatedVertices();
 
@@ -307,8 +307,8 @@ TEST(TetraMesh, Purge) {
                                                                  {0, 1, 2, 3},
                                                                  {2, 3, 4, 5},
                                                                  {3, 4, 5, 5}};
-    ExpectEQ(ref_vertices_after_duplicate_removal, tm.vertices_);
-    ExpectEQ(ref_tetras_after_vertex_duplicate_removal, tm.tetras_);
+    ExpectNear(ref_vertices_after_duplicate_removal, tm.vertices_);
+    ExpectNear(ref_tetras_after_vertex_duplicate_removal, tm.tetras_);
 
     tm.RemoveUnreferencedVertices();
 
@@ -319,7 +319,7 @@ TEST(TetraMesh, Purge) {
             {364.705882, 509.803922, 949.019608},
             {913.725490, 635.294118, 713.725490},
             {141.176471, 603.921569, 15.686275}};
-    ExpectEQ(ref_vertices_after_unreferenced_removal, tm.vertices_);
+    ExpectNear(ref_vertices_after_unreferenced_removal, tm.vertices_);
 
     tm.RemoveDegenerateTetras();
 
@@ -327,7 +327,7 @@ TEST(TetraMesh, Purge) {
             {1, 5, 2, 3}, {0, 1, 2, 3}, {0, 1, 2, 3}, {2, 3, 4, 5}
 
     };
-    ExpectEQ(ref_tetras_after_degenerate_removal, tm.tetras_);
+    ExpectNear(ref_tetras_after_degenerate_removal, tm.tetras_);
 }
 
 TEST(TetraMesh, HasVertices) {

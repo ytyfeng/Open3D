@@ -68,10 +68,10 @@ TEST(PinholeCameraTrajectory, ConvertToFromJsonValue) {
         EXPECT_EQ(src_params.intrinsic_.width_, dst_params.intrinsic_.width_);
         EXPECT_EQ(src_params.intrinsic_.height_, dst_params.intrinsic_.height_);
 
-        ExpectEQ(src_params.intrinsic_.intrinsic_matrix_,
-                 dst_params.intrinsic_.intrinsic_matrix_);
+        ExpectNear(src_params.intrinsic_.intrinsic_matrix_,
+                   dst_params.intrinsic_.intrinsic_matrix_);
 
-        ExpectEQ(src_params.extrinsic_, dst_params.extrinsic_);
+        ExpectNear(src_params.extrinsic_, dst_params.extrinsic_);
     }
 }
 

@@ -161,7 +161,7 @@ TEST(ColorMapOptimization, DISABLED_Project3DPointAndGetUVDepth) {
 
         // float u, v, d;
         // std::tie(u, v, d) = Project3DPointAndGetUVDepth(point, camera,
-        // camid); ExpectEQ(ref_points[i], Eigen::Vector3d(u, v, d));
+        // camid); ExpectNear(ref_points[i], Eigen::Vector3d(u, v, d));
     }
 }
 
@@ -789,7 +789,7 @@ TEST(ColorMapOptimization, DISABLED_SetGeometryColorAverage) {
 
     EXPECT_EQ(ref_vertex_colors.size(), mesh->vertex_colors_.size());
     for (size_t i = 0; i < mesh->vertex_colors_.size(); i++)
-        ExpectEQ(ref_vertex_colors[i], mesh->vertex_colors_[i]);
+        ExpectNear(ref_vertex_colors[i], mesh->vertex_colors_[i]);
 }
 
 TEST(ColorMapOptimization, DISABLED_SetGeometryColorAverage_WarpingFields) {
@@ -855,7 +855,7 @@ TEST(ColorMapOptimization, DISABLED_SetGeometryColorAverage_WarpingFields) {
 
     EXPECT_EQ(ref_vertex_colors.size(), mesh->vertex_colors_.size());
     for (size_t i = 0; i < mesh->vertex_colors_.size(); i++)
-        ExpectEQ(ref_vertex_colors[i], mesh->vertex_colors_[i]);
+        ExpectNear(ref_vertex_colors[i], mesh->vertex_colors_[i]);
 }
 
 TEST(ColorMapOptimization, DISABLED_MakeGradientImages) {
@@ -1112,23 +1112,23 @@ TEST(ColorMapOptimization, DISABLED_ColorMapOptimization) {
 
     EXPECT_EQ(ref_vertices.size(), mesh->vertices_.size());
     for (size_t i = 0; i < ref_vertices.size(); i++)
-        ExpectEQ(ref_vertices[i], mesh->vertices_[i]);
+        ExpectNear(ref_vertices[i], mesh->vertices_[i]);
 
     EXPECT_EQ(ref_vertex_normals.size(), mesh->vertex_normals_.size());
     for (size_t i = 0; i < ref_vertex_normals.size(); i++)
-        ExpectEQ(ref_vertex_normals[i], mesh->vertex_normals_[i]);
+        ExpectNear(ref_vertex_normals[i], mesh->vertex_normals_[i]);
 
     EXPECT_EQ(ref_vertex_colors.size(), mesh->vertex_colors_.size());
     for (size_t i = 0; i < ref_vertex_colors.size(); i++)
-        ExpectEQ(ref_vertex_colors[i], mesh->vertex_colors_[i]);
+        ExpectNear(ref_vertex_colors[i], mesh->vertex_colors_[i]);
 
     EXPECT_EQ(ref_triangles.size(), mesh->triangles_.size());
     for (size_t i = 0; i < ref_triangles.size(); i++)
-        ExpectEQ(ref_triangles[i], mesh->triangles_[i]);
+        ExpectNear(ref_triangles[i], mesh->triangles_[i]);
 
     EXPECT_EQ(ref_triangle_normals.size(), mesh->triangle_normals_.size());
     for (size_t i = 0; i < ref_triangle_normals.size(); i++)
-        ExpectEQ(ref_triangle_normals[i], mesh->triangle_normals_[i]);
+        ExpectNear(ref_triangle_normals[i], mesh->triangle_normals_[i]);
 }
 
 }  // namespace unit_test

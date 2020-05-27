@@ -90,7 +90,7 @@ TEST(UniformTSDFVolume, Constructor) {
     EXPECT_EQ(tsdf_volume.color_type_, color_type);
 
     // UniformTSDFVolume attributes
-    ExpectEQ(tsdf_volume.origin_, Eigen::Vector3d(0, 0, 0));
+    ExpectNear(tsdf_volume.origin_, Eigen::Vector3d(0, 0, 0));
     EXPECT_EQ(tsdf_volume.length_, length);
     EXPECT_EQ(tsdf_volume.resolution_, resolution);
     EXPECT_EQ(tsdf_volume.voxel_num_, resolution * resolution * resolution);
@@ -160,8 +160,9 @@ TEST(UniformTSDFVolume, RealData) {
     for (const Eigen::Vector3d& color : mesh->vertex_colors_) {
         color_sum += color;
     }
-    ExpectEQ(color_sum, Eigen::Vector3d(2703.841944, 2561.480949, 2481.503805),
-             /*threshold*/ 0.1);
+    ExpectNear(color_sum,
+               Eigen::Vector3d(2703.841944, 2561.480949, 2481.503805),
+               /*threshold*/ 0.1);
     // Uncomment to visualize
     // visualization::DrawGeometries({mesh});
 
@@ -173,14 +174,16 @@ TEST(UniformTSDFVolume, RealData) {
     for (const Eigen::Vector3d& color : pcd->colors_) {
         color_sum += color;
     }
-    ExpectEQ(color_sum, Eigen::Vector3d(1877.673116, 1862.126057, 1862.190616),
-             /*threshold*/ 0.1);
+    ExpectNear(color_sum,
+               Eigen::Vector3d(1877.673116, 1862.126057, 1862.190616),
+               /*threshold*/ 0.1);
     Eigen::Vector3d normal_sum(0, 0, 0);
     for (const Eigen::Vector3d& normal : pcd->normals_) {
         normal_sum += normal;
     }
-    ExpectEQ(normal_sum, Eigen::Vector3d(-161.569098, -95.969433, -1783.167177),
-             /*threshold*/ 0.1);
+    ExpectNear(normal_sum,
+               Eigen::Vector3d(-161.569098, -95.969433, -1783.167177),
+               /*threshold*/ 0.1);
 
     // Extract voxel cloud
     std::shared_ptr<geometry::PointCloud> voxel_pcd =
@@ -191,8 +194,9 @@ TEST(UniformTSDFVolume, RealData) {
     for (const Eigen::Vector3d& color : voxel_pcd->colors_) {
         color_sum += color;
     }
-    ExpectEQ(color_sum, Eigen::Vector3d(2096.428416, 2096.428416, 2096.428416),
-             /*threshold*/ 0.1);
+    ExpectNear(color_sum,
+               Eigen::Vector3d(2096.428416, 2096.428416, 2096.428416),
+               /*threshold*/ 0.1);
 }
 
 TEST(UniformTSDFVolume, DISABLED_Destructor) {}

@@ -42,9 +42,9 @@ TEST(FileGLTF, WriteReadTriangleMeshFromGLTF) {
     geometry::TriangleMesh tm_test;
     io::ReadTriangleMesh("tmp.gltf", tm_test, false);
 
-    ExpectEQ(tm_gt.vertices_, tm_test.vertices_);
-    ExpectEQ(tm_gt.triangles_, tm_test.triangles_);
-    ExpectEQ(tm_gt.vertex_normals_, tm_test.vertex_normals_);
+    ExpectNear(tm_gt.vertices_, tm_test.vertices_);
+    ExpectNear(tm_gt.triangles_, tm_test.triangles_);
+    ExpectNear(tm_gt.vertex_normals_, tm_test.vertex_normals_);
 }
 
 TEST(FileGLTF, WriteReadTriangleMeshFromGLB) {
@@ -58,9 +58,9 @@ TEST(FileGLTF, WriteReadTriangleMeshFromGLB) {
     geometry::TriangleMesh tm_test;
     io::ReadTriangleMesh("tmp.glb", tm_test, false);
 
-    ExpectEQ(tm_gt.vertices_, tm_test.vertices_);
-    ExpectEQ(tm_gt.triangles_, tm_test.triangles_);
-    ExpectEQ(tm_gt.vertex_normals_, tm_test.vertex_normals_);
+    ExpectNear(tm_gt.vertices_, tm_test.vertices_);
+    ExpectNear(tm_gt.triangles_, tm_test.triangles_);
+    ExpectNear(tm_gt.vertex_normals_, tm_test.vertex_normals_);
 }
 
 }  // namespace unit_test

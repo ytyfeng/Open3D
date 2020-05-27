@@ -38,13 +38,11 @@ TEST(Eigen, TransformVector6dToMatrix4d) {
 
     Eigen::Vector6d vector6d = Eigen::Vector6d::Zero();
 
-    ExpectEQ(Zero6d, vector6d);
-
     for (int i = 0; i < 6; i++) vector6d(i, 0) = (i + 1) / 6.0;
 
     Eigen::Matrix4d matrix4d = utility::TransformVector6dToMatrix4d(vector6d);
 
-    ExpectEQ(ref_matrix4d, matrix4d);
+    ExpectNear(ref_matrix4d, matrix4d);
 }
 
 TEST(Eigen, TransformMatrix4dToVector6d) {
@@ -76,7 +74,7 @@ TEST(Eigen, SolveLinearSystemPSD) {
     std::tie(status, x) =
             utility::SolveLinearSystemPSD(A, b, false, false, true, false);
     EXPECT_EQ(status, false);
-    ExpectEQ(x, x_ref);
+    ExpectNear(x, x_ref);
 
     // Rank == 3, not PSD, check_psd == true, should return error
     A << 3, 2, -1, 2, -2, 4, -1, 0.5, -1;
@@ -85,7 +83,7 @@ TEST(Eigen, SolveLinearSystemPSD) {
     std::tie(status, x) =
             utility::SolveLinearSystemPSD(A, b, false, false, false, true);
     EXPECT_EQ(status, false);
-    ExpectEQ(x, x_ref);
+    ExpectNear(x, x_ref);
 
     // Rank == 3, "fake PSD" (eigen values >= 0 and full rank but not symmetric)
     // check_psd == true, should return error
@@ -95,7 +93,7 @@ TEST(Eigen, SolveLinearSystemPSD) {
     std::tie(status, x) =
             utility::SolveLinearSystemPSD(A, b, false, false, false, true);
     EXPECT_EQ(status, false);
-    ExpectEQ(x, x_ref);
+    ExpectNear(x, x_ref);
 
     // A regular PSD case
     A << 3, 0, 1, 0, 3, 0, 1, 0, 3;
@@ -104,13 +102,13 @@ TEST(Eigen, SolveLinearSystemPSD) {
     std::tie(status, x) =
             utility::SolveLinearSystemPSD(A, b, false, false, true, true);
     EXPECT_EQ(status, true);
-    ExpectEQ(x, x_ref);
+    ExpectNear(x, x_ref);
 
     // The sparse solver shall work as well
     std::tie(status, x) =
             utility::SolveLinearSystemPSD(A, b, true, false, true, true);
     EXPECT_EQ(status, true);
-    ExpectEQ(x, x_ref);
+    ExpectNear(x, x_ref);
 }
 
 TEST(Eigen, SolveJacobianSystemAndObtainExtrinsicMatrix) {
@@ -137,7 +135,7 @@ TEST(Eigen, SolveJacobianSystemAndObtainExtrinsicMatrix) {
 
         Eigen::Vector6d r = utility::TransformMatrix4dToVector6d(result);
 
-        ExpectEQ(r, x);
+        ExpectNear(r, x);
     }
 }
 
@@ -166,7 +164,7 @@ TEST(Eigen, SolveJacobianSystemAndObtainExtrinsicMatrixArray) {
 
         Eigen::Vector6d r = utility::TransformMatrix4dToVector6d(result[0]);
 
-        ExpectEQ(r, x);
+        ExpectNear(r, x);
     }
 }
 
@@ -206,8 +204,8 @@ TEST(Eigen, ComputeJTJandJTr) {
             utility::ComputeJTJandJTr<Eigen::Matrix6d, Eigen::Vector6d>(
                     testFunction, iteration_num);
 
-    ExpectEQ(ref_JTr, JTr);
-    ExpectEQ(ref_JTJ, JTJ);
+    ExpectNear(ref_JTr, JTr);
+    ExpectNear(ref_JTJ, JTJ);
 }
 
 TEST(Eigen, ComputeJTJandJTr_vector) {
@@ -256,8 +254,8 @@ TEST(Eigen, ComputeJTJandJTr_vector) {
             utility::ComputeJTJandJTr<Eigen::Matrix6d, Eigen::Vector6d>(
                     testFunction, iteration_num);
 
-    ExpectEQ(ref_JTr, JTr);
-    ExpectEQ(ref_JTJ, JTJ);
+    ExpectNear(ref_JTr, JTr);
+    ExpectNear(ref_JTJ, JTJ);
 }
 
 }  // namespace unit_test

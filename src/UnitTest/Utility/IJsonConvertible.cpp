@@ -53,7 +53,7 @@ TEST(IJsonConvertible, EigenVector3dToFromJsonArray) {
                 ref, json_value);
         EXPECT_TRUE(status);
 
-        ExpectEQ(ref, v3d);
+        ExpectNear(ref, v3d);
     }
 }
 
@@ -78,7 +78,7 @@ TEST(IJsonConvertible, EigenVector4dToFromJsonArray) {
                 ref, json_value);
         EXPECT_TRUE(status);
 
-        ExpectEQ(ref, v4d);
+        ExpectNear(ref, v4d);
     }
 }
 
@@ -103,7 +103,7 @@ TEST(IJsonConvertible, EigenMatrix3dToFromJsonArray) {
                 ref, json_value);
         EXPECT_TRUE(status);
 
-        ExpectEQ(ref, m3d);
+        ExpectNear(ref, m3d);
     }
 }
 
@@ -128,7 +128,7 @@ TEST(IJsonConvertible, EigenMatrix4dToFromJsonArray) {
                 ref, json_value);
         EXPECT_TRUE(status);
 
-        ExpectEQ(ref, m4d);
+        ExpectNear(ref, m4d);
     }
 }
 
@@ -154,7 +154,7 @@ TEST(IJsonConvertible, EigenMatrix4d_uToFromJsonArray) {
                 ref, json_value);
         EXPECT_TRUE(status);
 
-        ExpectEQ(ref, m4d_u);
+        ExpectNear(ref, m4d_u);
     }
 }
 
@@ -179,7 +179,7 @@ TEST(IJsonConvertible, EigenMatrix6dToFromJsonArray) {
                 ref, json_value);
         EXPECT_TRUE(status);
 
-        ExpectEQ(ref, m6d);
+        ExpectNear(ref, m6d);
     }
 }
 
@@ -205,7 +205,7 @@ TEST(IJsonConvertible, EigenMatrix6d_uToFromJsonArray) {
                 ref, json_value);
         EXPECT_TRUE(status);
 
-        ExpectEQ(ref, m6d_u);
+        ExpectNear(ref, m6d_u);
     }
 }
 

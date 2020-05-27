@@ -63,8 +63,8 @@ TEST(RGBDImage, Constructor) {
 
     geometry::RGBDImage rgbd_image(color, *depth);
 
-    ExpectEQ(color.data_, rgbd_image.color_.data_);
-    ExpectEQ(depth->data_, rgbd_image.depth_.data_);
+    ExpectNear(color.data_, rgbd_image.color_.data_);
+    ExpectNear(depth->data_, rgbd_image.depth_.data_);
 }
 
 TEST(RGBDImage, DISABLED_MemberData) { NotImplemented(); }
@@ -119,8 +119,8 @@ TEST(RGBDImage, CreateFromColorAndDepth) {
     auto rgbd_image =
             geometry::RGBDImage::CreateFromColorAndDepth(color, depth);
 
-    ExpectEQ(ref_color, rgbd_image->color_.data_);
-    ExpectEQ(ref_depth, rgbd_image->depth_.data_);
+    ExpectNear(ref_color, rgbd_image->color_.data_);
+    ExpectNear(ref_depth, rgbd_image->depth_.data_);
 }
 
 TEST(RGBDImage, CreateFromRedwoodFormat) {
@@ -173,8 +173,8 @@ TEST(RGBDImage, CreateFromRedwoodFormat) {
     auto rgbd_image =
             geometry::RGBDImage::CreateFromRedwoodFormat(color, depth);
 
-    ExpectEQ(ref_color, rgbd_image->color_.data_);
-    ExpectEQ(ref_depth, rgbd_image->depth_.data_);
+    ExpectNear(ref_color, rgbd_image->color_.data_);
+    ExpectNear(ref_depth, rgbd_image->depth_.data_);
 }
 
 TEST(RGBDImage, CreateFromTUMFormat) {
@@ -226,8 +226,8 @@ TEST(RGBDImage, CreateFromTUMFormat) {
 
     auto rgbd_image = geometry::RGBDImage::CreateFromTUMFormat(color, depth);
 
-    ExpectEQ(ref_color, rgbd_image->color_.data_);
-    ExpectEQ(ref_depth, rgbd_image->depth_.data_);
+    ExpectNear(ref_color, rgbd_image->color_.data_);
+    ExpectNear(ref_depth, rgbd_image->depth_.data_);
 }
 
 TEST(RGBDImage, CreateFromSUNFormat) {
@@ -279,8 +279,8 @@ TEST(RGBDImage, CreateFromSUNFormat) {
 
     auto rgbd_image = geometry::RGBDImage::CreateFromSUNFormat(color, depth);
 
-    ExpectEQ(ref_color, rgbd_image->color_.data_);
-    ExpectEQ(ref_depth, rgbd_image->depth_.data_);
+    ExpectNear(ref_color, rgbd_image->color_.data_);
+    ExpectNear(ref_depth, rgbd_image->depth_.data_);
 }
 
 TEST(RGBDImage, CreateFromNYUFormat) {
@@ -332,8 +332,8 @@ TEST(RGBDImage, CreateFromNYUFormat) {
 
     auto rgbd_image = geometry::RGBDImage::CreateFromNYUFormat(color, depth);
 
-    ExpectEQ(ref_color, rgbd_image->color_.data_);
-    ExpectEQ(ref_depth, rgbd_image->depth_.data_);
+    ExpectNear(ref_color, rgbd_image->color_.data_);
+    ExpectNear(ref_depth, rgbd_image->depth_.data_);
 }
 
 TEST(RGBDImage, FilterPyramid) {
@@ -394,8 +394,8 @@ TEST(RGBDImage, FilterPyramid) {
             pyramid, geometry::Image::FilterType::Gaussian3);
 
     for (size_t j = 0; j < num_of_levels; j++) {
-        ExpectEQ(ref_color[j], filtered[j]->color_.data_);
-        ExpectEQ(ref_depth[j], filtered[j]->depth_.data_);
+        ExpectNear(ref_color[j], filtered[j]->color_.data_);
+        ExpectNear(ref_depth[j], filtered[j]->depth_.data_);
     }
 }
 

@@ -39,7 +39,7 @@ TEST(PinholeCameraIntrinsic, Constructor_Default) {
     EXPECT_EQ(-1, intrinsic.height_);
 
     Eigen::Matrix3d reference = Eigen::Matrix3d::Zero();
-    ExpectEQ(reference, intrinsic.intrinsic_matrix_);
+    ExpectNear(reference, intrinsic.intrinsic_matrix_);
 }
 
 TEST(PinholeCameraIntrinsic, Constructor_PrimeSenseDefault) {
@@ -52,7 +52,7 @@ TEST(PinholeCameraIntrinsic, Constructor_PrimeSenseDefault) {
     Eigen::Matrix3d reference;
     reference << 525.0, 0.0, 319.5, 0.0, 525.0, 239.5, 0.0, 0.0, 1.0;
 
-    ExpectEQ(reference, intrinsic.intrinsic_matrix_);
+    ExpectNear(reference, intrinsic.intrinsic_matrix_);
 }
 
 TEST(PinholeCameraIntrinsic, Constructor_Kinect2DepthCameraDefault) {
@@ -66,7 +66,7 @@ TEST(PinholeCameraIntrinsic, Constructor_Kinect2DepthCameraDefault) {
     Eigen::Matrix3d reference;
     reference << 365.456, 0.0, 254.878, 0.0, 365.456, 205.395, 0.0, 0.0, 1.0;
 
-    ExpectEQ(reference, intrinsic.intrinsic_matrix_);
+    ExpectNear(reference, intrinsic.intrinsic_matrix_);
 }
 
 TEST(PinholeCameraIntrinsic, Constructor_Kinect2ColorCameraDefault) {
@@ -81,7 +81,7 @@ TEST(PinholeCameraIntrinsic, Constructor_Kinect2ColorCameraDefault) {
     reference << 1059.9718, 0.0, 975.7193, 0.0, 1059.9718, 545.9533, 0.0, 0.0,
             1.0;
 
-    ExpectEQ(reference, intrinsic.intrinsic_matrix_);
+    ExpectNear(reference, intrinsic.intrinsic_matrix_);
 }
 
 TEST(PinholeCameraIntrinsic, Constructor_Init) {
@@ -102,7 +102,7 @@ TEST(PinholeCameraIntrinsic, Constructor_Init) {
     Eigen::Matrix3d reference;
     reference << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0;
 
-    ExpectEQ(reference, intrinsic.intrinsic_matrix_);
+    ExpectNear(reference, intrinsic.intrinsic_matrix_);
 }
 
 TEST(PinholeCameraIntrinsic, DISABLED_MemberData) { NotImplemented(); }
@@ -132,7 +132,7 @@ TEST(PinholeCameraIntrinsic, SetIntrinsics) {
     Eigen::Matrix3d reference;
     reference << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0;
 
-    ExpectEQ(reference, intrinsic.intrinsic_matrix_);
+    ExpectNear(reference, intrinsic.intrinsic_matrix_);
 }
 
 TEST(PinholeCameraIntrinsic, GetFocalLength) {
@@ -250,7 +250,7 @@ TEST(PinholeCameraIntrinsic, ConvertToFromJsonValue) {
     Eigen::Matrix3d reference;
     reference << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0;
 
-    ExpectEQ(reference, dst.intrinsic_matrix_);
+    ExpectNear(reference, dst.intrinsic_matrix_);
 }
 
 }  // namespace unit_test
