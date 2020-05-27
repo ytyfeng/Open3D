@@ -26,6 +26,7 @@
 
 #include "Open3D/Visualization/Rendering/Filament/FilamentCamera.h"
 
+#include <filament/math/mat4.h> // necessary for mat4f
 #include <filament/Camera.h>
 #include <filament/Engine.h>
 

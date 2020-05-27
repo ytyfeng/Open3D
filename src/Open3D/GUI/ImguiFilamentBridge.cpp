@@ -213,8 +213,11 @@ ImguiFilamentBridge::ImguiFilamentBridge(
             dynamic_cast<visualization::FilamentView*>(scene->GetView(view_id));
 
     auto native_view = impl_->view_->GetNativeView();
-    native_view->setClearTargets(false, false, false);
-    native_view->setRenderTarget(View::TargetBufferFlags::DEPTH_AND_STENCIL);
+    
+    
+    // NOTE: what are the proper replacements for this?
+    // native_view->setClearTargets(false, false, false);
+    // native_view->setRenderTarget(View::TargetBufferFlags::DEPTH_AND_STENCIL);
     native_view->setPostProcessingEnabled(false);
     native_view->setShadowsEnabled(false);
 
