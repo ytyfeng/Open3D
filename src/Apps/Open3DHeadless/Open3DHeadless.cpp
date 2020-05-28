@@ -36,6 +36,7 @@
 #include "Open3D/IO/ClassIO/ImageIO.h"
 #include "Open3D/IO/ClassIO/PointCloudIO.h"
 #include "Open3D/IO/ClassIO/TriangleMeshIO.h"
+#include "Open3D/Visualization/Rendering/Camera.h"
 #include "Open3D/Visualization/Rendering/Filament/FilamentEngine.h"
 #include "Open3D/Visualization/Rendering/Filament/FilamentRenderer.h"
 #include "Open3D/Visualization/Rendering/Filament/FilamentResourceManager.h"
@@ -356,10 +357,19 @@ int main(int argc, const char* argv[]) {
     auto g3 = std::static_pointer_cast<const geometry::Geometry3D>(geom);
     auto geom_handle = scene->AddGeometry(*g3, materials_.lit_material);
     bounds += scene->GetEntityBoundingBox(geom_handle);
+    auto cam = view->GetCamera();
+    float max_dim = 1.25f * bounds.GetMaxExtent();
+    Eigen::Vector3f center = bounds.GetCenter().cast<float>();
+    Eigen::Vector3f eye, up;
+    eye = Eigen::Vector3f(center.x(), center.y(), center.z() + max_dim);
+    up = Eigen::Vector3f(0, 1, 0);
+    cam->LookAt(center, eye, up);
+    cam->SetProjection(60.0, 1.0, 1.0, 1000.0f, visualization::Camera::FovType::Vertical);
     
     utility::LogInfo("Prepare to render headless...");
     std::size_t buffer_size = kBufferHeight*kBufferWidth*3*sizeof(uint8_t);
     uint8_t* buffer = static_cast<std::uint8_t*>(malloc(buffer_size));
+    memset(buffer, 0xff, buffer_size);
     bool frame_done = false;
 
     // auto read_pixels_cb = [&frame_done](void* buffer, std::size_t buffer_size, void* user) {
