@@ -48,6 +48,8 @@ endif()
 message(STATUS "Filament is located at ${FILAMENT_ROOT}")
 
 set(filament_INCLUDE_DIRS ${3RDPARTY_INSTALL_PREFIX}/include/filament)
+# NOTE: The following is for headless... need to conditionalize on HEADLESS
+#set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image meshoptimizer smol-v utils EGL GLESv2)
 set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image meshoptimizer smol-v utils)
 if (UNIX)
     set(filament_LIBRARIES ${filament_LIBRARIES} bluevk)

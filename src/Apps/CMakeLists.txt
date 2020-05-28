@@ -102,6 +102,35 @@ macro(APP SRC_DIR APP_NAME TARGET_NAME)
     endif()
 endmacro(APP)
 
+macro(SIMPLEAPP SRC_DIR APP_NAME TARGET_NAME)
+    set(APPS_DIR "${PROJECT_SOURCE_DIR}/src/Apps")
+    set(SOURCE_DIR "${APPS_DIR}/${SRC_DIR}")
+
+    file(GLOB SOURCE_FILES "${SOURCE_DIR}/*.cpp")
+    file(GLOB HEADER_FILES "${SOURCE_DIR}/*.h")
+
+    if (UNIX)
+        #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_NAME}")
+        add_executable(${TARGET_NAME} ${SOURCE_FILES} ${HEADER_FILES})
+        set_target_properties(${TARGET_NAME} PROPERTIES
+                              OUTPUT_NAME ${APP_NAME}
+                              )
+    else()
+      # Spit out error
+    endif()
+
+    add_dependencies(${TARGET_NAME} GuiResources)
+
+    set(DEPENDENCIES "Open3D")
+    foreach(DEPENDENCY IN LISTS DEPENDENCIES)
+        target_link_libraries(${TARGET_NAME} ${DEPENDENCY})
+    endforeach()
+
+    set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Apps")
+    ShowAndAbortOnWarning(${TARGET_NAME})
+endmacro(SIMPLEAPP)
+
 if (ENABLE_GUI)
     APP(Open3DViewer Open3D Open3DViewer ${CMAKE_PROJECT_NAME})
+    SIMPLEAPP(Open3DHeadless Open3DHeadless Open3DHeadless)
 endif()
