@@ -13,8 +13,9 @@ if ("${PATH_TO_FILAMENT}" STREQUAL "")
         if (NOT EXISTS ${ARCHIVE_FILE})
             set(ARCHIVE_FILE ${CMAKE_BINARY_DIR}/downloads/filament.tgz)
 
+            # NOTE: Will need to keep our own copy of Filament available for download but for now download from Filament's github
+            # NOTE: Download links for v1.7.0 are only set for Linux and Mac. GUI branch doesn't work on Windows yet
             # Setup download links ============================================================================
-            # NOTE: Will need to keep our own copy of Filament available for download but for now download from Filament's Github
             set(DOWNLOAD_URL_PRIMARY "https://github.com/google/filament/releases/download/v1.7.0/filament-20200515-linux.tgz")
             #set(DOWNLOAD_URL_PRIMARY "https://storage.googleapis.com/isl-datasets/open3d-dev/filament-20200220-linux.tgz")
             #set(DOWNLOAD_URL_FALLBACK "https://github.com/google/filament/releases/download/v1.4.5/filament-20200127-linux.tgz")
@@ -26,8 +27,9 @@ if ("${PATH_TO_FILAMENT}" STREQUAL "")
                 file(MAKE_DIRECTORY ${FILAMENT_ROOT})
                 set(TAR_PWD ${FILAMENT_ROOT})
             elseif (APPLE)
-                set(DOWNLOAD_URL_PRIMARY "https://storage.googleapis.com/isl-datasets/open3d-dev/filament-20200127-mac-10.14-resizefix2.tgz")
-                set(DOWNLOAD_URL_FALLBACK "https://github.com/google/filament/releases/download/v1.4.5/filament-20200127-mac.tgz")
+              set(DOWNLOAD_URL_PRIMARY "https://github.com/google/filament/releases/download/v1.7.0/filament-20200515-mac.tgz")
+              #set(DOWNLOAD_URL_PRIMARY "https://storage.googleapis.com/isl-datasets/open3d-dev/filament-20200127-mac-10.14-resizefix2.tgz")
+              #set(DOWNLOAD_URL_FALLBACK "https://github.com/google/filament/releases/download/v1.4.5/filament-20200127-mac.tgz")
             endif()
             # =================================================================================================
 
