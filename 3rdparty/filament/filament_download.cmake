@@ -14,8 +14,10 @@ if ("${PATH_TO_FILAMENT}" STREQUAL "")
             set(ARCHIVE_FILE ${CMAKE_BINARY_DIR}/downloads/filament.tgz)
 
             # Setup download links ============================================================================
-            set(DOWNLOAD_URL_PRIMARY "https://storage.googleapis.com/isl-datasets/open3d-dev/filament-20200220-linux.tgz")
-            set(DOWNLOAD_URL_FALLBACK "https://github.com/google/filament/releases/download/v1.4.5/filament-20200127-linux.tgz")
+            # NOTE: Will need to keep our own copy of Filament available for download but for now download from Filament's Github
+            set(DOWNLOAD_URL_PRIMARY "https://github.com/google/filament/releases/download/v1.7.0/filament-20200515-linux.tgz")
+            #set(DOWNLOAD_URL_PRIMARY "https://storage.googleapis.com/isl-datasets/open3d-dev/filament-20200220-linux.tgz")
+            #set(DOWNLOAD_URL_FALLBACK "https://github.com/google/filament/releases/download/v1.4.5/filament-20200127-linux.tgz")
 
             if (WIN32)
                 set(DOWNLOAD_URL_PRIMARY "https://storage.googleapis.com/isl-datasets/open3d-dev/filament-20200127-windows.tgz")
