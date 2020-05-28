@@ -61,6 +61,7 @@ public:
     Scene* GetScene(const SceneHandle& id) const override;
     void DestroyScene(const SceneHandle& id) override;
 
+    void SetClearColor(const Eigen::Vector4f& color) override;
     void UpdateSwapChain() override;
 
     void BeginFrame() override;

@@ -1063,7 +1063,7 @@ GuiVisualizer::GuiVisualizer(
             *GetRenderer().GetScene(scene_id));
     auto render_scene = scene->GetScene();
     impl_->scene_ = scene;
-    scene->SetBackgroundColor(gui::Color(1.0, 1.0, 1.0));
+    GetRenderer().SetClearColor(Eigen::Vector4f(1.f, 1.f, 1.f, 1.f));
 
     // Create light
     const int default_lighting_profile_idx = 0;
@@ -1183,8 +1183,9 @@ GuiVisualizer::GuiVisualizer(
     impl_->settings_.wgt_bg_color = std::make_shared<gui::ColorEdit>();
     impl_->settings_.wgt_bg_color->SetValue({1, 1, 1});
     impl_->settings_.wgt_bg_color->SetOnValueChanged(
-            [scene](const gui::Color &newColor) {
-                scene->SetBackgroundColor(newColor);
+            [this](const gui::Color &newColor) {
+                Eigen::Vector4f bg(newColor.GetPointer());
+                this->GetRenderer().SetClearColor(bg);
             });
     auto bg_layout = std::make_shared<gui::VGrid>(2, grid_spacing);
     bg_layout->AddChild(std::make_shared<gui::Label>("BG Color"));

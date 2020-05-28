@@ -630,8 +630,10 @@ void SceneWidget::SetFrame(const Rect& f) {
 }
 
 void SceneWidget::SetBackgroundColor(const Color& color) {
-    auto view = impl_->scene_.GetView(impl_->view_id_);
-    view->SetClearColor({color.GetRed(), color.GetGreen(), color.GetBlue()});
+    // NOTE: SceneWidget doesn't have the required access to set the background
+    // color given the Filament 1.7 API changes. It seems reasonable that
+    // 'SetBackgroundColor' should be part of SceneWidget so I've left this stub
+    // for a future implementation/refactoring. No one calls this currently.
 }
 
 void SceneWidget::SetDiscardBuffers(
