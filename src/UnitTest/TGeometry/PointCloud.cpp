@@ -32,6 +32,11 @@
 
 namespace open3d {
 
+// This shall be removed once geometry class migration is completed.
+using namespace tgeometry;
+
+namespace unit_test {
+
 class PointCloudPermuteDevices : public PermuteDevices {};
 INSTANTIATE_TEST_SUITE_P(PointCloud,
                          PointCloudPermuteDevices,
@@ -42,8 +47,6 @@ INSTANTIATE_TEST_SUITE_P(
         PointCloud,
         PointCloudPermuteDevicePairs,
         testing::ValuesIn(PointCloudPermuteDevicePairs::TestCases()));
-
-namespace tgeometry {
 
 TEST_P(PointCloudPermuteDevices, DefaultConstructor) {
     PointCloud pc;
@@ -90,5 +93,5 @@ TEST_P(PointCloudPermuteDevices, Scale) {
               std::vector<float>({-3, -3, -3, 1, 1, 1, 5, 5, 5}));
 }
 
-}  // namespace tgeometry
+}  // namespace unit_test
 }  // namespace open3d
