@@ -212,7 +212,7 @@ void SetMaterialProperties(visualization::FilamentRenderer& renderer) {
 void SetupLighting(visualization::FilamentRenderer& renderer, visualization::Scene& scene) {
     auto& app = gui::Application::GetInstance();
     std::string resource_path = app.GetResourcePath();
-    auto ibl_path = resource_path + "/default_ibl.ktx";
+    auto ibl_path = resource_path + "/hall_ibl.ktx";
     auto ibl = renderer.AddIndirectLight(
         visualization::ResourceLoadRequest(ibl_path.data()));
     scene.SetIndirectLight(ibl);
@@ -307,23 +307,69 @@ void PrepareGeometry(std::shared_ptr<geometry::Geometry> geom, visualization::Fi
 const int kBufferWidth = 512;
 const int kBufferHeight = 512;
 
-void ReadPixelsCallback(void* buffer, size_t buffer_size, void* user) {
-    // Let main loop know we're done
-    bool* fdone = static_cast<bool*>(user);
-    *fdone = true;
+struct RenderRequest {
+    bool frame_done = false;
+    std::string output_filename;
+};
 
-    // Save image
-    utility::LogInfo("Saving image {}", "headless_lit.png");
-    auto image = std::make_shared<geometry::Image>();
-    image->width_ = kBufferWidth;
-    image->height_ = kBufferHeight;
-    image->num_of_channels_ = 3;
-    image->bytes_per_channel_ = 1;
-    image->data_ = std::vector<uint8_t>((uint8_t*)buffer, (uint8_t*)buffer + buffer_size);
-    std::string opath("headless_lit.png");
-    if (!io::WriteImage(opath, *image)) {
-        utility::LogWarning("Could not write image to {}", opath);
+void ReadPixelsCallback(void* buffer, size_t buffer_size, void* user) {
+    auto rr = static_cast<RenderRequest*>(user);
+    rr->frame_done = true;
+
+    if (!rr->output_filename.empty() && buffer_size > 0) {
+        utility::LogInfo("Saving image {}...", rr->output_filename);
+        auto image = std::make_shared<geometry::Image>();
+        image->width_ = kBufferWidth;
+        image->height_ = kBufferHeight;
+        image->num_of_channels_ = 3;
+        image->bytes_per_channel_ = 1;
+        image->data_ = std::vector<uint8_t>((uint8_t*)buffer,
+                                            (uint8_t*)buffer + buffer_size);
+        if (!io::WriteImage(rr->output_filename, *image)) {
+            utility::LogWarning("Could not write image to {}",
+                                rr->output_filename);
+        }
+    } else {
+        utility::LogError(
+                "Error trying to save rendered image {}, size {} bytes",
+                rr->output_filename, buffer_size);
     }
+}
+
+void RenderSnapshot(visualization::FilamentRenderer& renderer,
+                    visualization::View* view,
+                    filament::SwapChain* swap_chain,
+                    const std::string& filename) {
+    std::size_t buffer_size =
+            kBufferHeight * kBufferWidth * 3 * sizeof(uint8_t);
+    uint8_t* buffer = static_cast<std::uint8_t*>(malloc(buffer_size));
+    utility::LogInfo("Rendering snapshot to {}...", filename);
+    auto* downcast_view = dynamic_cast<visualization::FilamentView*>(view);
+    bool read_pixels_started = false;
+    RenderRequest request;
+    request.output_filename = "headless_lit.png";
+    while (!request.frame_done) {
+        if (renderer.GetNative()->beginFrame(swap_chain)) {
+            renderer.GetNative()->render(downcast_view->GetNativeView());
+
+            if (!read_pixels_started) {
+                read_pixels_started = true;
+
+                filament::backend::PixelBufferDescriptor pd(
+                        buffer, buffer_size,
+                        filament::backend::PixelDataFormat::RGB,
+                        filament::backend::PixelDataType::UBYTE,
+                        ReadPixelsCallback, &request);
+                renderer.GetNative()->readPixels(0, 0, kBufferWidth,
+                                                 kBufferHeight, std::move(pd));
+            }
+        }
+
+        renderer.GetNative()->endFrame();
+    }
+
+    // clean up
+    free(buffer);
 }
 
 int main(int argc, const char* argv[]) {
@@ -395,52 +441,7 @@ int main(int argc, const char* argv[]) {
     cam->LookAt(center, eye, up);
     cam->SetProjection(60.0, 1.0, 1.0, 1000.0f, visualization::Camera::FovType::Vertical);
     
-    utility::LogInfo("Prepare to render headless...");
-    std::size_t buffer_size = kBufferHeight*kBufferWidth*3*sizeof(uint8_t);
-    uint8_t* buffer = static_cast<std::uint8_t*>(malloc(buffer_size));
-    bool frame_done = false;
-
-    // auto read_pixels_cb = [&frame_done](void* buffer, std::size_t buffer_size, void* user) {
-    //                           utility::LogWarning("We got a READ PIXELS CALLBACK!!!");
-    //                           frame_done = true;
-    //                       };
-
-    utility::LogInfo("Render headless...");
-    auto* downcast_view = dynamic_cast<visualization::FilamentView*>(view);
-    bool read_pixels_started = false;
-    while (!frame_done) {
-        if(renderer->GetNative()->beginFrame(swap_chain)) {
-            renderer->GetNative()->render(downcast_view->GetNativeView());
-            
-            if(!read_pixels_started) {
-                read_pixels_started = true;
-
-                filament::backend::PixelBufferDescriptor pd(
-                        buffer, buffer_size,
-                        filament::backend::PixelDataFormat::RGB,
-                        filament::backend::PixelDataType::UBYTE, ReadPixelsCallback,
-                        &frame_done);
-                renderer->GetNative()->readPixels(0, 0, kBufferWidth,
-                                                  kBufferHeight, std::move(pd));
-            }
-        }
-
-        renderer->GetNative()->endFrame();
-    }
-
-
-    // Now render to buffer...
-    // renderer->RenderToImage(512, 512, view, scene,
-    //         [](std::shared_ptr<geometry::Image> image) mutable {
-    //             utility::LogWarning("GOT CALLBACK!");
-    //             std::string opath("headless_lit.png");
-    //             if (!io::WriteImage(opath, *image)) {
-    //                 utility::LogWarning("Could not write image to {}", opath);
-    //             }
-    //         });
-
-    
-    //renderer->BeginFrame();
+    RenderSnapshot(*renderer, view, swap_chain, "headless_lit.png");
     
     return 0;
 }
