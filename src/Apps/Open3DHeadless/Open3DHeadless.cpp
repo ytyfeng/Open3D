@@ -40,6 +40,7 @@
 #include "Open3D/Visualization/Rendering/Filament/FilamentEngine.h"
 #include "Open3D/Visualization/Rendering/Filament/FilamentRenderer.h"
 #include "Open3D/Visualization/Rendering/Filament/FilamentResourceManager.h"
+#include "Open3D/Visualization/Rendering/Filament/FilamentScene.h"
 #include "Open3D/Visualization/Rendering/Filament/FilamentView.h"
 #include "Open3D/Visualization/Rendering/Scene.h"
 #include "Open3D/Visualization/Rendering/View.h"
@@ -148,6 +149,12 @@ struct HeadlessMaterials {
     TextureMaps maps;
 } materials_;
 
+struct LightSettings {
+    visualization::IndirectLightHandle ibl;
+    visualization::SkyboxHandle sky;
+    visualization::LightHandle directional_light;
+} lighting_;
+
 void SetMaterialProperties(visualization::FilamentRenderer& renderer) {
     materials_.lit_material =
             renderer.ModifyMaterial(materials_.lit_material)
@@ -200,6 +207,26 @@ void SetMaterialProperties(visualization::FilamentRenderer& renderer) {
                             "albedo", materials_.maps.albedo_map,
                             visualization::TextureSamplerParameters::Pretty())
                     .Finish();
+}
+
+void SetupLighting(visualization::FilamentRenderer& renderer, visualization::Scene& scene) {
+    auto& app = gui::Application::GetInstance();
+    std::string resource_path = app.GetResourcePath();
+    auto ibl_path = resource_path + "/default_ibl.ktx";
+    auto ibl = renderer.AddIndirectLight(
+        visualization::ResourceLoadRequest(ibl_path.data()));
+    scene.SetIndirectLight(ibl);
+    scene.SetIndirectLightIntensity(45000);
+    scene.SetIndirectLightRotation(visualization::Scene::Transform::Identity());
+    
+    auto sky_path = resource_path + "/hall_skybox.ktx";
+    auto sky =
+            renderer.AddSkybox(visualization::ResourceLoadRequest(sky_path.data()));
+    scene.SetSkybox(sky);
+    
+    // Store lighting parameters...
+    lighting_.ibl = ibl;
+    lighting_.sky = sky;
 }
 
 void PrepareGeometry(std::shared_ptr<geometry::Geometry> geom, visualization::FilamentRenderer& renderer) {
@@ -286,7 +313,7 @@ void ReadPixelsCallback(void* buffer, size_t buffer_size, void* user) {
     *fdone = true;
 
     // Save image
-    utility::LogWarning("in READPIXELS callback: {}", buffer_size);
+    utility::LogInfo("Saving image {}", "headless_lit.png");
     auto image = std::make_shared<geometry::Image>();
     image->width_ = kBufferWidth;
     image->height_ = kBufferHeight;
@@ -353,6 +380,8 @@ int main(int argc, const char* argv[]) {
     utility::LogInfo("Preparing geometry, materials and scenes...");
     PrepareGeometry(geom, *renderer);
     SetMaterialProperties(*renderer);
+    SetupLighting(*renderer, *scene);
+
     geometry::AxisAlignedBoundingBox bounds;
     auto g3 = std::static_pointer_cast<const geometry::Geometry3D>(geom);
     auto geom_handle = scene->AddGeometry(*g3, materials_.lit_material);
@@ -369,7 +398,6 @@ int main(int argc, const char* argv[]) {
     utility::LogInfo("Prepare to render headless...");
     std::size_t buffer_size = kBufferHeight*kBufferWidth*3*sizeof(uint8_t);
     uint8_t* buffer = static_cast<std::uint8_t*>(malloc(buffer_size));
-    memset(buffer, 0xff, buffer_size);
     bool frame_done = false;
 
     // auto read_pixels_cb = [&frame_done](void* buffer, std::size_t buffer_size, void* user) {
