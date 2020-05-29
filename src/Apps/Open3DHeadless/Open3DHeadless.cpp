@@ -212,14 +212,14 @@ void SetMaterialProperties(visualization::FilamentRenderer& renderer) {
 void SetupLighting(visualization::FilamentRenderer& renderer, visualization::Scene& scene) {
     auto& app = gui::Application::GetInstance();
     std::string resource_path = app.GetResourcePath();
-    auto ibl_path = resource_path + "/hall_ibl.ktx";
+    auto ibl_path = resource_path + "/nightlights_ibl.ktx";
     auto ibl = renderer.AddIndirectLight(
         visualization::ResourceLoadRequest(ibl_path.data()));
     scene.SetIndirectLight(ibl);
     scene.SetIndirectLightIntensity(45000);
     scene.SetIndirectLightRotation(visualization::Scene::Transform::Identity());
     
-    auto sky_path = resource_path + "/hall_skybox.ktx";
+    auto sky_path = resource_path + "/nightlights_skybox.ktx";
     auto sky =
             renderer.AddSkybox(visualization::ResourceLoadRequest(sky_path.data()));
     scene.SetSkybox(sky);
@@ -304,8 +304,8 @@ void PrepareGeometry(std::shared_ptr<geometry::Geometry> geom, visualization::Fi
     }
 }
 
-const int kBufferWidth = 512;
-const int kBufferHeight = 512;
+const int kBufferWidth = 1920;
+const int kBufferHeight = 1080;
 
 struct RenderRequest {
     bool frame_done = false;
@@ -347,7 +347,7 @@ void RenderSnapshot(visualization::FilamentRenderer& renderer,
     auto* downcast_view = dynamic_cast<visualization::FilamentView*>(view);
     bool read_pixels_started = false;
     RenderRequest request;
-    request.output_filename = "headless_lit.png";
+    request.output_filename = filename;
     while (!request.frame_done) {
         if (renderer.GetNative()->beginFrame(swap_chain)) {
             renderer.GetNative()->render(downcast_view->GetNativeView());
@@ -433,15 +433,28 @@ int main(int argc, const char* argv[]) {
     auto geom_handle = scene->AddGeometry(*g3, materials_.lit_material);
     bounds += scene->GetEntityBoundingBox(geom_handle);
     auto cam = view->GetCamera();
-    float max_dim = 1.25f * bounds.GetMaxExtent();
+    float radius = 1.25f * bounds.GetMaxExtent();
     Eigen::Vector3f center = bounds.GetCenter().cast<float>();
     Eigen::Vector3f eye, up;
-    eye = Eigen::Vector3f(center.x(), center.y(), center.z() + max_dim);
+    eye = Eigen::Vector3f(center.x(), center.y(), center.z() + radius);
     up = Eigen::Vector3f(0, 1, 0);
     cam->LookAt(center, eye, up);
-    cam->SetProjection(60.0, 1.0, 1.0, 1000.0f, visualization::Camera::FovType::Vertical);
+    float aspect = (float)kBufferWidth/(float)kBufferHeight;
+    cam->SetProjection(60.0, aspect, 1.0, 500.0f, visualization::Camera::FovType::Horizontal);
     
-    RenderSnapshot(*renderer, view, swap_chain, "headless_lit.png");
+    // Demo loop -- do a 360 loop around the model and save out each snapshot
+    
+    std::string base_fname("headless_images/headless_");
+    for(int i = 0; i < 360; ++i) {
+        float deg_rad = i * M_PI/180.f;
+        float dx = sin(deg_rad)*radius;
+        float dz = cos(deg_rad)*radius;
+        float dy = sin(deg_rad*2.0f) * 2.0f;
+        eye = Eigen::Vector3f(center.x()+dx, center.y() + dy, center.z() + dz);
+        cam->LookAt(center, eye, up);
+        std::string fname = fmt::format("headless_images/headless_{:0>5d}.png", i);
+        RenderSnapshot(*renderer, view, swap_chain, fname);
+    }
     
     return 0;
 }
