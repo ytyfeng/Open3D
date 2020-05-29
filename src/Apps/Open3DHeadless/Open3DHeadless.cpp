@@ -468,9 +468,12 @@ int main(int argc, const char* argv[]) {
         float dy = sin(deg_rad*2.0f) * 2.0f;
         eye = Eigen::Vector3f(center.x()+dx, center.y() + dy, center.z() + dz);
         cam->LookAt(center, eye, up);
-        std::string fname = fmt::format("headless_images/headless_{:0>5d}.png", i);
+        std::string fname = fmt::format("headless_out/out_{:0>5d}.png", i);
         RenderSnapshot(*renderer, view, swap_chain, fname);
     }
 
+    utility::LogInfo("In order to create a video from the generated image run the following command:");
+    utility::LogInfo("ffmpeg -framerate 60 -i headless_out/out_%05d.png -pix_fmt yuv420p video.mp4");
+    
     return 0;
 }
