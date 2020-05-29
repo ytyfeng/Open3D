@@ -209,21 +209,24 @@ void SetMaterialProperties(visualization::FilamentRenderer& renderer) {
                     .Finish();
 }
 
-void SetupLighting(visualization::FilamentRenderer& renderer, visualization::Scene& scene) {
+void SetupLighting(visualization::FilamentRenderer& renderer,
+                   visualization::Scene& scene,
+                   const std::string& ibl_name,
+                   const std::string& sky_name) {
     auto& app = gui::Application::GetInstance();
     std::string resource_path = app.GetResourcePath();
-    auto ibl_path = resource_path + "/nightlights_ibl.ktx";
+    auto ibl_path = resource_path + "/" + ibl_name;
     auto ibl = renderer.AddIndirectLight(
-        visualization::ResourceLoadRequest(ibl_path.data()));
+            visualization::ResourceLoadRequest(ibl_path.data()));
     scene.SetIndirectLight(ibl);
     scene.SetIndirectLightIntensity(45000);
     scene.SetIndirectLightRotation(visualization::Scene::Transform::Identity());
-    
-    auto sky_path = resource_path + "/nightlights_skybox.ktx";
-    auto sky =
-            renderer.AddSkybox(visualization::ResourceLoadRequest(sky_path.data()));
+
+    auto sky_path = resource_path + "/" + sky_name;
+    auto sky = renderer.AddSkybox(
+            visualization::ResourceLoadRequest(sky_path.data()));
     scene.SetSkybox(sky);
-    
+
     // Store lighting parameters...
     lighting_.ibl = ibl;
     lighting_.sky = sky;
@@ -376,15 +379,28 @@ int main(int argc, const char* argv[]) {
 
     // Need a model name
     if(argc < 2) {
-        utility::LogWarning("Usage: Open3DHeadless [meshfile|pointcloud]");
+        utility::LogWarning("Usage: Open3DHeadless [meshfile|pointcloud] [OPTIONAL: IBL rootname]");
         return -1;
     }
 
-    utility::LogInfo("Initializing rendering engine for headless...");
-    
+    std::string model_name(argv[1]);
+    std::string ibl_name;
+    std::string sky_name;
+    if(argc > 2) {
+        ibl_name = std::string(argv[2]);
+        sky_name = ibl_name + "_skybox.ktx";
+        ibl_name += "_ibl.ktx";
+    } else {
+        ibl_name = "hall_ibl.ktx";
+        sky_name = "hall_skybox.ktx";
+    }
+    utility::LogInfo("Running Headless demo on model {}", model_name);
+    utility::LogInfo("\tIBL: {}, SKY: {}", ibl_name, sky_name);
+        
     // Initialize rendering engine
     // NOTE: An App object is currently required because FilamentResourceManager
     // uses it directly to get resource path.
+    utility::LogInfo("Initializing rendering engine for headless...");
     auto& app = gui::Application::GetInstance();
     app.Initialize(argc, argv);
     
@@ -426,7 +442,7 @@ int main(int argc, const char* argv[]) {
     utility::LogInfo("Preparing geometry, materials and scenes...");
     PrepareGeometry(geom, *renderer);
     SetMaterialProperties(*renderer);
-    SetupLighting(*renderer, *scene);
+    SetupLighting(*renderer, *scene, ibl_name, sky_name);
 
     geometry::AxisAlignedBoundingBox bounds;
     auto g3 = std::static_pointer_cast<const geometry::Geometry3D>(geom);
@@ -455,6 +471,6 @@ int main(int argc, const char* argv[]) {
         std::string fname = fmt::format("headless_images/headless_{:0>5d}.png", i);
         RenderSnapshot(*renderer, view, swap_chain, fname);
     }
-    
+
     return 0;
 }
