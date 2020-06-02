@@ -238,7 +238,6 @@ void PrepareGeometry(std::shared_ptr<geometry::Geometry> geom, visualization::Fi
         auto mesh =
                 std::static_pointer_cast<const geometry::TriangleMesh>(geom);
 
-        bool albedo_only = true;
         if (mesh->HasMaterials()) {
             auto mesh_material = mesh->materials_.begin()->second;
             materials_.properties.base_color.x() = mesh_material.baseColor.r();
@@ -263,45 +262,37 @@ void PrepareGeometry(std::shared_ptr<geometry::Geometry> geom, visualization::Fi
             if (is_map_valid(mesh_material.normalMap)) {
                 materials_.maps.normal_map =
                         renderer.AddTexture(mesh_material.normalMap);
-                albedo_only = false;
             }
             if (is_map_valid(mesh_material.ambientOcclusion)) {
                 materials_.maps.ambient_occlusion_map =
                         renderer.AddTexture(mesh_material.ambientOcclusion);
-                albedo_only = false;
             }
             if (is_map_valid(mesh_material.roughness)) {
                 materials_.maps.roughness_map =
                         renderer.AddTexture(mesh_material.roughness);
-                albedo_only = false;
             }
             if (is_map_valid(mesh_material.metallic)) {
                 materials_.properties.metallic = 1.f;
                 materials_.maps.metallic_map =
                         renderer.AddTexture(mesh_material.metallic);
-                albedo_only = false;
             } else {
                 materials_.properties.metallic = 0.f;
             }
             if (is_map_valid(mesh_material.reflectance)) {
                 materials_.maps.reflectance_map =
                         renderer.AddTexture(mesh_material.reflectance);
-                albedo_only = false;
             }
             if (is_map_valid(mesh_material.clearCoat)) {
                 materials_.maps.clear_coat_map =
                         renderer.AddTexture(mesh_material.clearCoat);
-                albedo_only = false;
             }
             if (is_map_valid(mesh_material.clearCoatRoughness)) {
                 materials_.maps.clear_coat_roughness_map =
                         renderer.AddTexture(mesh_material.clearCoatRoughness);
-                albedo_only = false;
             }
             if (is_map_valid(mesh_material.anisotropy)) {
                 materials_.maps.anisotropy_map =
                         renderer.AddTexture(mesh_material.anisotropy);
-                albedo_only = false;
             }
         }
     }
