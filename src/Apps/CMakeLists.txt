@@ -111,7 +111,6 @@ macro(SIMPLEAPP SRC_DIR APP_NAME TARGET_NAME)
     file(GLOB HEADER_FILES "${SOURCE_DIR}/*.h")
 
     if (UNIX)
-        #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_NAME}")
         add_executable(${TARGET_NAME} ${SOURCE_FILES} ${HEADER_FILES})
         set_target_properties(${TARGET_NAME} PROPERTIES
                               OUTPUT_NAME ${APP_NAME}
@@ -124,11 +123,14 @@ macro(SIMPLEAPP SRC_DIR APP_NAME TARGET_NAME)
 
     set(DEPENDENCIES "Open3D")
     foreach(DEPENDENCY IN LISTS DEPENDENCIES)
-        target_link_libraries(${TARGET_NAME} ${DEPENDENCY})
+        target_link_libraries(${APP_NAME} PRIVATE ${DEPENDENCY})
     endforeach()
 
     set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Apps")
-    ShowAndAbortOnWarning(${TARGET_NAME})
+    open3d_show_and_abort_on_warning(${TARGET_NAME})
+    open3d_set_global_properties(${TARGET_NAME})
+    open3d_link_3rdparty_libraries(${APP_NAME})
+
 endmacro(SIMPLEAPP)
 
 if (ENABLE_GUI)
