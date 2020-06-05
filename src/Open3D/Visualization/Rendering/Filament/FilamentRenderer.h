@@ -55,6 +55,8 @@ public:
     FilamentRenderer(filament::Engine& engine,
                      void* native_drawable,
                      FilamentResourceManager& resource_mgr);
+    FilamentRenderer(filament::Engine& engine,
+                     FilamentResourceManager& resource_mgr);
     ~FilamentRenderer() override;
 
     SceneHandle CreateScene() override;

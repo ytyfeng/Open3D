@@ -29,6 +29,7 @@
 #include <filament/Renderer.h>
 #include <filament/SwapChain.h>
 #include <memory>
+#include <thread>
 #include "Open3D/GUI/Application.h"
 #include "Open3D/Geometry/Geometry.h"
 #include "Open3D/Geometry/BoundingVolume.h"
@@ -342,7 +343,7 @@ void RenderSnapshot(visualization::FilamentRenderer& renderer,
     bool read_pixels_started = false;
     RenderRequest request;
     request.output_filename = filename;
-    while (!request.frame_done) {
+    //while (!request.frame_done) {
         if (renderer.GetNative()->beginFrame(swap_chain)) {
             renderer.GetNative()->render(downcast_view->GetNativeView());
 
@@ -360,8 +361,15 @@ void RenderSnapshot(visualization::FilamentRenderer& renderer,
         }
 
         renderer.GetNative()->endFrame();
-    }
 
+        while (!request.frame_done) {
+            utility::LogInfo("Waiting for frame to complete...");
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+        // renderer.BeginFrame();
+        // renderer.Draw();
+        // renderer.EndFrame();
+        
     // clean up
     free(buffer);
 }
@@ -398,7 +406,7 @@ int main(int argc, const char* argv[]) {
     visualization::EngineInstance::SelectBackend(filament::backend::Backend::OPENGL);
     auto& engine = visualization::EngineInstance::GetInstance();
     auto& resource_mgr = visualization::EngineInstance::GetResourceManager();
-    auto renderer = std::make_unique<visualization::FilamentRenderer>(engine, nullptr, resource_mgr);
+    auto renderer = std::make_unique<visualization::FilamentRenderer>(engine, resource_mgr);
     auto scene_id = renderer->CreateScene();
     auto scene = renderer->GetScene(scene_id);
     auto view_id = scene->AddView(0, 0, kBufferWidth, kBufferHeight);
@@ -437,7 +445,8 @@ int main(int argc, const char* argv[]) {
 
     geometry::AxisAlignedBoundingBox bounds;
     auto g3 = std::static_pointer_cast<const geometry::Geometry3D>(geom);
-    auto geom_handle = scene->AddGeometry(*g3, materials_.lit_material);
+    auto geom_handle = scene->AddGeometry(*g3, visualization::FilamentResourceManager::kNormalsMaterial);
+    //    auto geom_handle = scene->AddGeometry(*g3, materials_.lit_material);
     bounds += scene->GetEntityBoundingBox(geom_handle);
     auto cam = view->GetCamera();
     float radius = 1.25f * bounds.GetMaxExtent();
@@ -461,6 +470,9 @@ int main(int argc, const char* argv[]) {
         cam->LookAt(center, eye, up);
         std::string fname = fmt::format("headless_out/out_{:0>5d}.png", i);
         RenderSnapshot(*renderer, view, swap_chain, fname);
+        // renderer->BeginFrame();
+        // renderer->Draw();
+        // renderer->EndFrame();
     }
 
     utility::LogInfo("In order to create a video from the generated image run the following command:");

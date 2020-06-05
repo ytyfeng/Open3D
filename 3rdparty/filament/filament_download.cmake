@@ -56,7 +56,10 @@ message(STATUS "Filament is located at ${FILAMENT_ROOT}")
 # #set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image meshoptimizer smol-v utils EGL GLESv2)
 # =======
 # >>>>>>> master
-set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image meshoptimizer smol-v utils)
-if (UNIX)
-    set(filament_LIBRARIES ${filament_LIBRARIES} bluevk)
-endif()
+
+#### NOTE: Headless doesn't use bluevk; need to conditionalize it out
+set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image matdbg meshoptimizer smol-v utils)
+set(filament_SHARED_LIBRARIES EGL GLESv2)
+# if (UNIX)
+#     set(filament_LIBRARIES ${filament_LIBRARIES} bluevk)
+# endif()

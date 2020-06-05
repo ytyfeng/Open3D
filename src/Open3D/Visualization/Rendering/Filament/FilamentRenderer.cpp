@@ -54,6 +54,16 @@ FilamentRenderer::FilamentRenderer(filament::Engine& engine,
     materials_modifier_ = std::make_unique<FilamentMaterialModifier>();
 }
 
+FilamentRenderer::FilamentRenderer(filament::Engine& engine,
+                                   FilamentResourceManager& resource_mgr)
+    : engine_(engine), resource_mgr_(resource_mgr) {
+    renderer_ = engine_.createRenderer();
+    // Create tiny offscreen swap chain. It doesn't get used in headless but
+    // filament seems to require it
+    swap_chain_ = engine_.createSwapChain(64, 64);
+    materials_modifier_ = std::make_unique<FilamentMaterialModifier>();
+}
+
 FilamentRenderer::~FilamentRenderer() {
     scenes_.clear();
 
