@@ -18,16 +18,14 @@ else()
         if (NOT EXISTS ${ARCHIVE_FILE})
             set(ARCHIVE_FILE ${CMAKE_BINARY_DIR}/downloads/filament.tgz)
 
-            # NOTE: Will need to keep our own copy of Filament available for download but for now download from Filament's github
             # NOTE: Download links for v1.7.0 are only set for Linux and Mac. GUI branch doesn't work on Windows yet
             # Setup download links ============================================================================
-            set(DOWNLOAD_URL_PRIMARY "https://github.com/google/filament/releases/download/v1.7.0/filament-20200515-linux.tgz")
-            #set(DOWNLOAD_URL_PRIMARY "https://storage.googleapis.com/isl-datasets/open3d-dev/filament-20200220-linux.tgz")
-            #set(DOWNLOAD_URL_FALLBACK "https://github.com/google/filament/releases/download/v1.4.5/filament-20200127-linux.tgz")
+            set(DOWNLOAD_URL_PRIMARY "https://storage.googleapis.com/isl-datasets/open3d-dev/filament-1.7-20200603-linux.tgz")
+            set(DOWNLOAD_URL_FALLBACK "https://github.com/google/filament/releases/download/v1.7.0/filament-20200515-linux.tgz")
 
             if (WIN32)
                 set(DOWNLOAD_URL_PRIMARY "https://storage.googleapis.com/isl-datasets/open3d-dev/filament-20200127-windows.tgz")
-                set(DOWNLOAD_URL_FALLBACK "https://github.com/google/filament/releases/download/v1.4.5/filament-20200127-windows.tgz")
+                set(DOWNLOAD_URL_FALLBACK "https://github.com/google/filament/releases/download/v1.7.0/filament-20200515-linux.tgz")
                 
                 file(MAKE_DIRECTORY ${FILAMENT_ROOT})
                 set(TAR_PWD ${FILAMENT_ROOT})
@@ -58,8 +56,9 @@ message(STATUS "Filament is located at ${FILAMENT_ROOT}")
 # >>>>>>> master
 
 #### NOTE: Headless doesn't use bluevk; need to conditionalize it out
-set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image matdbg meshoptimizer smol-v utils)
-set(filament_SHARED_LIBRARIES EGL GLESv2)
-# if (UNIX)
-#     set(filament_LIBRARIES ${filament_LIBRARIES} bluevk)
-# endif()
+set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image meshoptimizer smol-v utils)
+#set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image matdbg meshoptimizer smol-v utils)
+#set(filament_SHARED_LIBRARIES EGL GLESv2)
+if (UNIX)
+    set(filament_LIBRARIES ${filament_LIBRARIES} bluevk)
+endif()
