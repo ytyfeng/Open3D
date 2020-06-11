@@ -1463,6 +1463,49 @@ void GuiVisualizer::SetTitle(const std::string &title) {
     Super::SetTitle(title.c_str());
 }
 
+std::shared_ptr<geometry::Image> CombineTextures(const std::vector<std::shared_ptr<geometry::Image>>& maps) {
+    if(maps.size() != 3 && maps.size() != 4) {
+        utility::LogWarning("Can only combine 3 or 4 maps. No other combination is supported");
+        return {};
+    }
+
+    int width = 0, height = 0;
+    for(auto img : maps) {
+        if(img && img->HasData()) {
+            if (width == 0) {
+                width = img->width_;
+                height = img->height_;
+            } else if (width != img->width_ || height != img->height_) {
+                utility::LogWarning("Attribute texture maps must have same dimensions");
+                return {};
+            }
+        }
+    }
+
+    // no maps are valid so return empty texture and let caller use defaults
+    if (width == 0 || height == 0) {
+        return {};
+    }
+
+    auto image = std::make_shared<geometry::Image>();
+    image->Prepare(width, height, maps.size(), 1);
+    auto data = reinterpret_cast<uint8_t*>(image->data_.data());
+
+    for(int i = 0; i < width; ++i) {
+        for(int j = 0; j < height; ++j) {
+            for(int c = 0; c < static_cast<int>(maps.size()); ++c) {
+                if(maps[c] && maps[c]->HasData()) {
+                    *data++ = *(maps[c]->PointerAt<uint8_t>(j, i, 0));
+                } else {
+                    *data++ = 255;
+                }
+            }
+        }
+    }
+
+    return image;
+}
+
 void GuiVisualizer::SetGeometry(
         const std::vector<std::shared_ptr<const geometry::Geometry>>
                 &geometries) {
@@ -1547,6 +1590,16 @@ void GuiVisualizer::SetGeometry(
                         return map && map->HasData();
                     };
 
+                    std::vector<std::shared_ptr<geometry::Image>> rmrao_maps{
+                            mesh_material.roughness, mesh_material.metallic,
+                            mesh_material.reflectance,
+                            mesh_material.ambientOcclusion};
+                    std::vector<std::shared_ptr<geometry::Image>> cc_maps{
+                            mesh_material.clearCoat, mesh_material.clearCoatRoughness,
+                            mesh_material.anisotropy};
+                    auto rmrao_img = CombineTextures(rmrao_maps);
+                    auto cc_img = CombineTextures(cc_maps);
+
                     if (is_map_valid(mesh_material.albedo)) {
                         maps.albedo_map =
                                 GetRenderer().AddTexture(mesh_material.albedo);
@@ -1556,44 +1609,20 @@ void GuiVisualizer::SetGeometry(
                                 mesh_material.normalMap);
                         albedo_only = false;
                     }
-                    if (is_map_valid(mesh_material.ambientOcclusion)) {
-                        // maps.ambient_occlusion_map = GetRenderer().AddTexture(
-                        //         mesh_material.ambientOcclusion);
-                        albedo_only = false;
+                    if(rmrao_img) {
+                        maps.rough_metal_refl_ao_map = GetRenderer().AddTexture(rmrao_img);
                     }
-                    if (is_map_valid(mesh_material.roughness)) {
-                        // maps.roughness_map = GetRenderer().AddTexture(
-                        //         mesh_material.roughness);
+                    if(cc_img) {
+                        maps.cc_ccrough_aniso_map = GetRenderer().AddTexture(cc_img);
+                    }
+                    if(!albedo_only || std::any_of(rmrao_maps.begin(), rmrao_maps.end(), is_map_valid) ||
+                       std::any_of(cc_maps.begin(), cc_maps.end(), is_map_valid)) {
                         albedo_only = false;
                     }
                     if (is_map_valid(mesh_material.metallic)) {
                         material.metallic = 1.f;
-                        // maps.metallic_map = GetRenderer().AddTexture(
-                        //         mesh_material.metallic);
-                        albedo_only = false;
                     } else {
                         material.metallic = 0.f;
-                    }
-                    if (is_map_valid(mesh_material.reflectance)) {
-                        // maps.reflectance_map = GetRenderer().AddTexture(
-                        //         mesh_material.reflectance);
-                        albedo_only = false;
-                    }
-                    if (is_map_valid(mesh_material.clearCoat)) {
-                        // maps.clear_coat_map = GetRenderer().AddTexture(
-                        //         mesh_material.clearCoat);
-                        albedo_only = false;
-                    }
-                    if (is_map_valid(mesh_material.clearCoatRoughness)) {
-                        // maps.clear_coat_roughness_map =
-                        //         GetRenderer().AddTexture(
-                        //                 mesh_material.clearCoatRoughness);
-                        albedo_only = false;
-                    }
-                    if (is_map_valid(mesh_material.anisotropy)) {
-                        // maps.anisotropy_map = GetRenderer().AddTexture(
-                        //         mesh_material.anisotropy);
-                        albedo_only = false;
                     }
                     impl_->SetMaterialsToCurrentSettings(GetRenderer(),
                                                          material, maps);
