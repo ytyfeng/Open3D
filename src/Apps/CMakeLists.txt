@@ -43,7 +43,8 @@ macro(APP SRC_DIR APP_NAME TARGET_NAME)
     foreach(DEPENDENCY IN LISTS DEPENDENCIES)
         target_link_libraries(${TARGET_NAME} PRIVATE ${DEPENDENCY})
     endforeach()
-
+    # NOTE: To be uncommented for HEADLESS later
+    #target_link_libraries(${TARGET_NAME} PRIVATE EGL)
     set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Apps")
     open3d_show_and_abort_on_warning(${TARGET_NAME})
     open3d_set_global_properties(${TARGET_NAME})
@@ -130,6 +131,8 @@ macro(SIMPLEAPP SRC_DIR APP_NAME TARGET_NAME)
     open3d_show_and_abort_on_warning(${TARGET_NAME})
     open3d_set_global_properties(${TARGET_NAME})
     open3d_link_3rdparty_libraries(${APP_NAME})
+    # NOTE: To be uncommented later for HEADLESS
+    #target_link_libraries(${TARGET_NAME} PRIVATE EGL)
 
 endmacro(SIMPLEAPP)
 

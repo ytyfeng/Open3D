@@ -1,7 +1,7 @@
 if (FILAMENT_PRECOMPILED_ROOT)
     if (EXISTS "${FILAMENT_PRECOMPILED_ROOT}")
         set(FILAMENT_ROOT "${FILAMENT_PRECOMPILED_ROOT}")
-    else()
+     else()
         message(FATAL_ERROR "Filament binaries not found in ${FILAMENT_PRECOMPILED_ROOT}")
     endif()
 else()
@@ -48,17 +48,10 @@ endif()
 
 message(STATUS "Filament is located at ${FILAMENT_ROOT}")
 
-# <<<<<<< HEAD
-# set(filament_INCLUDE_DIRS ${3RDPARTY_INSTALL_PREFIX}/include/filament)
-# # NOTE: The following is for headless... need to conditionalize on HEADLESS
-# #set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image meshoptimizer smol-v utils EGL GLESv2)
-# =======
-# >>>>>>> master
-
-#### NOTE: Headless doesn't use bluevk; need to conditionalize it out
 set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image meshoptimizer smol-v utils)
+# TODO: Figure out proper way to link filament in headless
+#set(filament_SHARED_LIBRARIES EGL)
 #set(filament_LIBRARIES filameshio filament filamat_lite filaflat filabridge geometry backend bluegl ibl image matdbg meshoptimizer smol-v utils)
-#set(filament_SHARED_LIBRARIES EGL GLESv2)
 if (UNIX)
     set(filament_LIBRARIES ${filament_LIBRARIES} bluevk)
 endif()

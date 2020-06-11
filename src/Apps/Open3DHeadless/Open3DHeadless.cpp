@@ -28,11 +28,12 @@
 #include <backend/PixelBufferDescriptor.h>
 #include <filament/Renderer.h>
 #include <filament/SwapChain.h>
+
 #include <memory>
-#include <thread>
+
 #include "Open3D/GUI/Application.h"
-#include "Open3D/Geometry/Geometry.h"
 #include "Open3D/Geometry/BoundingVolume.h"
+#include "Open3D/Geometry/Geometry.h"
 #include "Open3D/IO/ClassIO/FileFormatIO.h"
 #include "Open3D/IO/ClassIO/ImageIO.h"
 #include "Open3D/IO/ClassIO/PointCloudIO.h"
@@ -49,8 +50,7 @@
 
 using namespace open3d;
 
-std::shared_ptr<geometry::Geometry3D>
-LoadGeometry(const std::string &path) {
+std::shared_ptr<geometry::Geometry3D> LoadGeometry(const std::string& path) {
     auto geometry = std::shared_ptr<geometry::Geometry3D>();
 
     auto geometry_type = io::ReadFileGeometryType(path);
@@ -233,9 +233,11 @@ void SetupLighting(visualization::FilamentRenderer& renderer,
     lighting_.sky = sky;
 }
 
-void PrepareGeometry(std::shared_ptr<geometry::Geometry> geom, visualization::FilamentRenderer& renderer) {
+void PrepareGeometry(std::shared_ptr<geometry::Geometry> geom,
+                     visualization::FilamentRenderer& renderer) {
     // Massage the geometry and get its material properties
-    if (geom->GetGeometryType() ==  geometry::Geometry::GeometryType::TriangleMesh) {
+    if (geom->GetGeometryType() ==
+        geometry::Geometry::GeometryType::TriangleMesh) {
         auto mesh =
                 std::static_pointer_cast<const geometry::TriangleMesh>(geom);
 
@@ -253,8 +255,8 @@ void PrepareGeometry(std::shared_ptr<geometry::Geometry> geom, visualization::Fi
 
             auto is_map_valid =
                     [](std::shared_ptr<geometry::Image> map) -> bool {
-                        return map && map->HasData();
-                    };
+                return map && map->HasData();
+            };
 
             if (is_map_valid(mesh_material.albedo)) {
                 materials_.maps.albedo_map =
@@ -343,7 +345,7 @@ void RenderSnapshot(visualization::FilamentRenderer& renderer,
     bool read_pixels_started = false;
     RenderRequest request;
     request.output_filename = filename;
-    //while (!request.frame_done) {
+    while (!request.frame_done) {
         if (renderer.GetNative()->beginFrame(swap_chain)) {
             renderer.GetNative()->render(downcast_view->GetNativeView());
 
@@ -361,31 +363,25 @@ void RenderSnapshot(visualization::FilamentRenderer& renderer,
         }
 
         renderer.GetNative()->endFrame();
+    }
 
-        while (!request.frame_done) {
-            utility::LogInfo("Waiting for frame to complete...");
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
-        // renderer.BeginFrame();
-        // renderer.Draw();
-        // renderer.EndFrame();
-        
     // clean up
     free(buffer);
 }
 
 int main(int argc, const char* argv[]) {
-
     // Need a model name
-    if(argc < 2) {
-        utility::LogWarning("Usage: Open3DHeadless [meshfile|pointcloud] [OPTIONAL: IBL rootname]");
+    if (argc < 2) {
+        utility::LogWarning(
+                "Usage: Open3DHeadless [meshfile|pointcloud] [OPTIONAL: IBL "
+                "rootname]");
         return -1;
     }
 
     std::string model_name(argv[1]);
     std::string ibl_name;
     std::string sky_name;
-    if(argc > 2) {
+    if (argc > 2) {
         ibl_name = std::string(argv[2]);
         sky_name = ibl_name + "_skybox.ktx";
         ibl_name += "_ibl.ktx";
@@ -395,24 +391,27 @@ int main(int argc, const char* argv[]) {
     }
     utility::LogInfo("Running Headless demo on model {}", model_name);
     utility::LogInfo("\tIBL: {}, SKY: {}", ibl_name, sky_name);
-        
+
     // Initialize rendering engine
     // NOTE: An App object is currently required because FilamentResourceManager
     // uses it directly to get resource path.
     utility::LogInfo("Initializing rendering engine for headless...");
     auto& app = gui::Application::GetInstance();
     app.Initialize(argc, argv);
-    
-    visualization::EngineInstance::SelectBackend(filament::backend::Backend::OPENGL);
+
+    visualization::EngineInstance::SelectBackend(
+            filament::backend::Backend::OPENGL);
     auto& engine = visualization::EngineInstance::GetInstance();
     auto& resource_mgr = visualization::EngineInstance::GetResourceManager();
-    auto renderer = std::make_unique<visualization::FilamentRenderer>(engine, resource_mgr);
+    auto renderer = std::make_unique<visualization::FilamentRenderer>(
+            engine, resource_mgr);
     auto scene_id = renderer->CreateScene();
     auto scene = renderer->GetScene(scene_id);
     auto view_id = scene->AddView(0, 0, kBufferWidth, kBufferHeight);
     visualization::View* view = scene->GetView(view_id);
-    auto swap_chain = engine.createSwapChain(kBufferWidth, kBufferHeight, filament::SwapChain::CONFIG_READABLE);
-    
+    auto swap_chain = engine.createSwapChain(
+            kBufferWidth, kBufferHeight, filament::SwapChain::CONFIG_READABLE);
+
     renderer->SetClearColor(Eigen::Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 
     utility::LogInfo("Initializing materials...");
@@ -426,18 +425,14 @@ int main(int argc, const char* argv[]) {
     materials_.lit_material = renderer->AddMaterialInstance(lit_handle);
     materials_.unlit_material = renderer->AddMaterialInstance(unlit_handle);
     materials_.maps = TextureMaps();
-    
-    // NOTE: not using a gui since this is headless but all the essential
-    // rendering work happens inside the gui so we have no choice but to
-    // 'create' one
-    // std::vector<std::shared_ptr<const geometry::Geometry>> empty;
-    // auto vis = std::make_shared<visualization::GuiVisualizer>(empty, "", 32, 32, 0, 0);
-    
+
     utility::LogInfo("Loading model {}", argv[1]);
     auto geom = LoadGeometry(argv[1]);
-    if(!geom) return -1; // NOTE: LoadGeometry outputs the relevant warnings on failure
+    if (!geom)
+        return -1;  // NOTE: LoadGeometry outputs the relevant warnings on
+                    // failure
     utility::LogInfo("Model successfully loaded.");
-    
+
     utility::LogInfo("Preparing geometry, materials and scenes...");
     PrepareGeometry(geom, *renderer);
     SetMaterialProperties(*renderer);
@@ -445,8 +440,7 @@ int main(int argc, const char* argv[]) {
 
     geometry::AxisAlignedBoundingBox bounds;
     auto g3 = std::static_pointer_cast<const geometry::Geometry3D>(geom);
-    auto geom_handle = scene->AddGeometry(*g3, visualization::FilamentResourceManager::kNormalsMaterial);
-    //    auto geom_handle = scene->AddGeometry(*g3, materials_.lit_material);
+    auto geom_handle = scene->AddGeometry(*g3, materials_.lit_material);
     bounds += scene->GetEntityBoundingBox(geom_handle);
     auto cam = view->GetCamera();
     float radius = 1.25f * bounds.GetMaxExtent();
@@ -455,28 +449,31 @@ int main(int argc, const char* argv[]) {
     eye = Eigen::Vector3f(center.x(), center.y(), center.z() + radius);
     up = Eigen::Vector3f(0, 1, 0);
     cam->LookAt(center, eye, up);
-    float aspect = (float)kBufferWidth/(float)kBufferHeight;
-    cam->SetProjection(60.0, aspect, 1.0, 500.0f, visualization::Camera::FovType::Horizontal);
-    
+    float aspect = (float)kBufferWidth / (float)kBufferHeight;
+    cam->SetProjection(60.0, aspect, 1.0, 500.0f,
+                       visualization::Camera::FovType::Horizontal);
+
     // Demo loop -- do a 360 loop around the model and save out each snapshot
-    
+
     std::string base_fname("headless_images/headless_");
-    for(int i = 0; i < 360; ++i) {
-        float deg_rad = i * M_PI/180.f;
-        float dx = sin(deg_rad)*radius;
-        float dz = cos(deg_rad)*radius;
-        float dy = sin(deg_rad*2.0f) * 2.0f;
-        eye = Eigen::Vector3f(center.x()+dx, center.y() + dy, center.z() + dz);
+    for (int i = 0; i < 360; ++i) {
+        float deg_rad = i * M_PI / 180.f;
+        float dx = sin(deg_rad) * radius;
+        float dz = cos(deg_rad) * radius;
+        float dy = sin(deg_rad * 2.0f) * 2.0f;
+        eye = Eigen::Vector3f(center.x() + dx, center.y() + dy,
+                              center.z() + dz);
         cam->LookAt(center, eye, up);
         std::string fname = fmt::format("headless_out/out_{:0>5d}.png", i);
         RenderSnapshot(*renderer, view, swap_chain, fname);
-        // renderer->BeginFrame();
-        // renderer->Draw();
-        // renderer->EndFrame();
     }
 
-    utility::LogInfo("In order to create a video from the generated image run the following command:");
-    utility::LogInfo("ffmpeg -framerate 60 -i headless_out/out_%05d.png -pix_fmt yuv420p video.mp4");
-    
+    utility::LogInfo(
+            "In order to create a video from the generated image run the "
+            "following command:");
+    utility::LogInfo(
+            "ffmpeg -framerate 60 -i headless_out/out_%05d.png -pix_fmt "
+            "yuv420p video.mp4");
+
     return 0;
 }
