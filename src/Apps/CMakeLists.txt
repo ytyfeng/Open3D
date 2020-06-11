@@ -138,5 +138,6 @@ endmacro(SIMPLEAPP)
 
 if (ENABLE_GUI)
     APP(Open3DViewer Open3D Open3DViewer ${CMAKE_PROJECT_NAME})
-    SIMPLEAPP(Open3DHeadless Open3DHeadless Open3DHeadless)
+    # NOTE: Headless disabled for now
+    #SIMPLEAPP(Open3DHeadless Open3DHeadless Open3DHeadless)
 endif()
