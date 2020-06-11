@@ -494,16 +494,10 @@ struct GuiVisualizer::Impl {
     struct TextureMaps {
         TextureHandle albedo_map = FilamentResourceManager::kDefaultTexture;
         TextureHandle normal_map = FilamentResourceManager::kDefaultNormalMap;
-        TextureHandle ambient_occlusion_map =
+        TextureHandle rough_metal_refl_ao_map =
                 FilamentResourceManager::kDefaultTexture;
-        TextureHandle roughness_map = FilamentResourceManager::kDefaultTexture;
-        TextureHandle metallic_map = FilamentResourceManager::kDefaultTexture;
-        TextureHandle reflectance_map =
+        TextureHandle cc_ccrough_aniso_map =
                 FilamentResourceManager::kDefaultTexture;
-        TextureHandle clear_coat_map = FilamentResourceManager::kDefaultTexture;
-        TextureHandle clear_coat_roughness_map =
-                FilamentResourceManager::kDefaultTexture;
-        TextureHandle anisotropy_map = FilamentResourceManager::kDefaultTexture;
     };
 
     std::map<std::string, LitMaterial> prefab_materials_ = {
@@ -636,16 +630,10 @@ struct GuiVisualizer::Impl {
         }
         defaults.maps.albedo_map = FilamentResourceManager::kDefaultTexture;
         defaults.maps.normal_map = FilamentResourceManager::kDefaultNormalMap;
-        defaults.maps.ambient_occlusion_map =
+        defaults.maps.rough_metal_refl_ao_map  =
                 FilamentResourceManager::kDefaultTexture;
-        defaults.maps.roughness_map = FilamentResourceManager::kDefaultTexture;
-        defaults.maps.metallic_map = FilamentResourceManager::kDefaultTexture;
-        defaults.maps.reflectance_map =
+        defaults.maps.cc_ccrough_aniso_map =
                 FilamentResourceManager::kDefaultTexture;
-        defaults.maps.clear_coat_map = FilamentResourceManager::kDefaultTexture;
-        defaults.maps.clear_coat_roughness_map =
-                FilamentResourceManager::kDefaultTexture;
-        defaults.maps.anisotropy_map = FilamentResourceManager::kDefaultTexture;
         settings_.current_materials = defaults;
 
         auto lit_handle = renderer.AddMaterialInstance(lit_material_);
@@ -664,24 +652,11 @@ struct GuiVisualizer::Impl {
                                     TextureSamplerParameters::Pretty())
                         .SetTexture("normalMap", defaults.maps.normal_map,
                                     TextureSamplerParameters::Pretty())
-                        .SetTexture("ambientOcclusionMap",
-                                    defaults.maps.ambient_occlusion_map,
+                        .SetTexture("roughMetalReflectAOMap",
+                                    defaults.maps.rough_metal_refl_ao_map,
                                     TextureSamplerParameters::Pretty())
-                        .SetTexture("roughnessMap", defaults.maps.roughness_map,
-                                    TextureSamplerParameters::Pretty())
-                        .SetTexture("metallicMap", defaults.maps.metallic_map,
-                                    TextureSamplerParameters::Pretty())
-                        .SetTexture("reflectanceMap",
-                                    defaults.maps.reflectance_map,
-                                    TextureSamplerParameters::Pretty())
-                        .SetTexture("clearCoatMap",
-                                    defaults.maps.clear_coat_map,
-                                    TextureSamplerParameters::Pretty())
-                        .SetTexture("clearCoatRoughnessMap",
-                                    defaults.maps.clear_coat_roughness_map,
-                                    TextureSamplerParameters::Pretty())
-                        .SetTexture("anisotropyMap",
-                                    defaults.maps.anisotropy_map,
+                        .SetTexture("clearCoatCCRoughAnisoMap",
+                                    defaults.maps.cc_ccrough_aniso_map,
                                     TextureSamplerParameters::Pretty())
                         .Finish();
 
@@ -740,21 +715,11 @@ struct GuiVisualizer::Impl {
                                     TextureSamplerParameters::Pretty())
                         .SetTexture("normalMap", maps.normal_map,
                                     TextureSamplerParameters::Pretty())
-                        .SetTexture("ambientOcclusionMap",
-                                    maps.ambient_occlusion_map,
+                        .SetTexture("roughMetalReflectAOMap",
+                                    maps.rough_metal_refl_ao_map,
                                     TextureSamplerParameters::Pretty())
-                        .SetTexture("roughnessMap", maps.roughness_map,
-                                    TextureSamplerParameters::Pretty())
-                        .SetTexture("metallicMap", maps.metallic_map,
-                                    TextureSamplerParameters::Pretty())
-                        .SetTexture("reflectanceMap", maps.reflectance_map,
-                                    TextureSamplerParameters::Pretty())
-                        .SetTexture("clearCoatMap", maps.clear_coat_map,
-                                    TextureSamplerParameters::Pretty())
-                        .SetTexture("clearCoatRoughnessMap",
-                                    maps.clear_coat_roughness_map,
-                                    TextureSamplerParameters::Pretty())
-                        .SetTexture("anisotropyMap", maps.anisotropy_map,
+                        .SetTexture("clearCoatCCRoughAnisoMap",
+                                    maps.cc_ccrough_aniso_map,
                                     TextureSamplerParameters::Pretty())
                         .Finish();
         settings_.current_materials.unlit.handle =
@@ -1592,42 +1557,42 @@ void GuiVisualizer::SetGeometry(
                         albedo_only = false;
                     }
                     if (is_map_valid(mesh_material.ambientOcclusion)) {
-                        maps.ambient_occlusion_map = GetRenderer().AddTexture(
-                                mesh_material.ambientOcclusion);
+                        // maps.ambient_occlusion_map = GetRenderer().AddTexture(
+                        //         mesh_material.ambientOcclusion);
                         albedo_only = false;
                     }
                     if (is_map_valid(mesh_material.roughness)) {
-                        maps.roughness_map = GetRenderer().AddTexture(
-                                mesh_material.roughness);
+                        // maps.roughness_map = GetRenderer().AddTexture(
+                        //         mesh_material.roughness);
                         albedo_only = false;
                     }
                     if (is_map_valid(mesh_material.metallic)) {
                         material.metallic = 1.f;
-                        maps.metallic_map = GetRenderer().AddTexture(
-                                mesh_material.metallic);
+                        // maps.metallic_map = GetRenderer().AddTexture(
+                        //         mesh_material.metallic);
                         albedo_only = false;
                     } else {
                         material.metallic = 0.f;
                     }
                     if (is_map_valid(mesh_material.reflectance)) {
-                        maps.reflectance_map = GetRenderer().AddTexture(
-                                mesh_material.reflectance);
+                        // maps.reflectance_map = GetRenderer().AddTexture(
+                        //         mesh_material.reflectance);
                         albedo_only = false;
                     }
                     if (is_map_valid(mesh_material.clearCoat)) {
-                        maps.clear_coat_map = GetRenderer().AddTexture(
-                                mesh_material.clearCoat);
+                        // maps.clear_coat_map = GetRenderer().AddTexture(
+                        //         mesh_material.clearCoat);
                         albedo_only = false;
                     }
                     if (is_map_valid(mesh_material.clearCoatRoughness)) {
-                        maps.clear_coat_roughness_map =
-                                GetRenderer().AddTexture(
-                                        mesh_material.clearCoatRoughness);
+                        // maps.clear_coat_roughness_map =
+                        //         GetRenderer().AddTexture(
+                        //                 mesh_material.clearCoatRoughness);
                         albedo_only = false;
                     }
                     if (is_map_valid(mesh_material.anisotropy)) {
-                        maps.anisotropy_map = GetRenderer().AddTexture(
-                                mesh_material.anisotropy);
+                        // maps.anisotropy_map = GetRenderer().AddTexture(
+                        //         mesh_material.anisotropy);
                         albedo_only = false;
                     }
                     impl_->SetMaterialsToCurrentSettings(GetRenderer(),

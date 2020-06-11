@@ -650,6 +650,10 @@ void FilamentResourceManager::LoadDefaults() {
     const std::string resource_root =
             gui::Application::GetInstance().GetResourcePath();
 
+    // NOTE: defaultTexture is a 3-channel RGB texture. It's being used below
+    // for some maps expecting a 4 channel texture. That is ok because the alpha
+    // channel of an RGB texture always returns 1 in the shader if it's not
+    // present in the image itself.
     const auto texture_path = resource_root + "/defaultTexture.png";
     auto texture_img = io::CreateImageFromFile(texture_path);
     auto texture = LoadTextureFromImage(texture_img);
@@ -680,16 +684,9 @@ void FilamentResourceManager::LoadDefaults() {
     lit_mat->setDefaultParameter("anisotropy", 0.f);
     lit_mat->setDefaultParameter("pointSize", 3.f);
     lit_mat->setDefaultParameter("albedo", texture, default_sampler);
-    lit_mat->setDefaultParameter("metallicMap", texture, default_sampler);
-    lit_mat->setDefaultParameter("roughnessMap", texture, default_sampler);
+    lit_mat->setDefaultParameter("roughMetalReflectAOMap", texture, default_sampler);
     lit_mat->setDefaultParameter("normalMap", normal_map, default_sampler);
-    lit_mat->setDefaultParameter("ambientOcclusionMap", texture,
-                                 default_sampler);
-    lit_mat->setDefaultParameter("reflectanceMap", texture, default_sampler);
-    lit_mat->setDefaultParameter("clearCoatMap", texture, default_sampler);
-    lit_mat->setDefaultParameter("clearCoatRoughnessMap", texture,
-                                 default_sampler);
-    lit_mat->setDefaultParameter("anisotropyMap", texture, default_sampler);
+    lit_mat->setDefaultParameter("clearCoatCCRoughAnisoMap", texture, default_sampler);
     materials_[kDefaultLit] = MakeShared(lit_mat, engine_);
 
     const auto unlit_path = resource_root + "/defaultUnlit.filamat";
