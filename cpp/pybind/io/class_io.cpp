@@ -163,17 +163,17 @@ void pybind_class_io(py::module &m_io) {
                                  map_shared_argument_docstrings);
 
     m_io.def("write_point_cloud",
-             [](const std::string &filename,
+             [](const std::string &filename, const std::string &format,
                 const geometry::PointCloud &pointcloud, bool write_ascii,
                 bool compressed, bool print_progress) {
                  py::gil_scoped_release release;
                  return io::WritePointCloud(
                          filename, pointcloud,
-                         {write_ascii, compressed, print_progress});
+                         {format, write_ascii, compressed, print_progress});
              },
              "Function to write PointCloud to file", "filename"_a,
-             "pointcloud"_a, "write_ascii"_a = false, "compressed"_a = false,
-             "print_progress"_a = false);
+             "pointcloud"_a, "format"_a = "auto", "write_ascii"_a = false, 
+	     "compressed"_a = false, "print_progress"_a = false);
     docstring::FunctionDocInject(m_io, "write_point_cloud",
                                  map_shared_argument_docstrings);
 

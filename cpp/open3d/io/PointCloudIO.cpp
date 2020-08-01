@@ -132,8 +132,12 @@ bool ReadPointCloud(const std::string &filename,
 bool WritePointCloud(const std::string &filename,
                      const geometry::PointCloud &pointcloud,
                      const WritePointCloudOption &params) {
-    std::string format =
-            utility::filesystem::GetFileExtensionInLowerCase(filename);
+  std::string format = params.format;
+  if (format == "auto") { 
+    format = utility::filesystem::GetFileExtensionInLowerCase(filename);
+  }
+  utility::LogDebug("Format {} File {}", params.format, filename);
+
     auto map_itr = file_extension_to_pointcloud_write_function.find(format);
     if (map_itr == file_extension_to_pointcloud_write_function.end()) {
         utility::LogWarning(
@@ -150,14 +154,19 @@ bool WritePointCloud(const std::string &filename,
 }
 bool WritePointCloud(const std::string &filename,
                      const geometry::PointCloud &pointcloud,
+		     const std::string &file_format,
                      bool write_ascii /* = false*/,
                      bool compressed /* = false*/,
                      bool print_progress) {
+    std::string format = file_format;
+    if (format == "auto") {
+      format = utility::filesystem::GetFileExtensionInLowerCase(filename);
+    }
+
     WritePointCloudOption p;
+    p.format = format;
     p.write_ascii = WritePointCloudOption::IsAscii(write_ascii);
     p.compressed = WritePointCloudOption::Compressed(compressed);
-    std::string format =
-            utility::filesystem::GetFileExtensionInLowerCase(filename);
     utility::ConsoleProgressUpdater progress_updater(
             std::string("Writing ") + utility::ToUpper(format) +
                     " file: " + filename,

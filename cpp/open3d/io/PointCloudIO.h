@@ -93,20 +93,24 @@ struct WritePointCloudOption {
     WritePointCloudOption(
             // Attention: when you update the defaults, update the docstrings in
             // pybind/io/class_io.cpp
+	    std::string format = "auto",
             IsAscii write_ascii = IsAscii::Binary,
             Compressed compressed = Compressed::Uncompressed,
             bool print_progress = false,
             std::function<bool(double)> update_progress = {})
-        : write_ascii(write_ascii),
+        : format(format),
+          write_ascii(write_ascii),
           compressed(compressed),
           print_progress(print_progress),
           update_progress(update_progress){};
     // for compatibility
-    WritePointCloudOption(bool write_ascii,
+    WritePointCloudOption(std::string format = "auto",
+	 	          bool write_ascii,
                           bool compressed = false,
                           bool print_progress = false,
                           std::function<bool(double)> update_progress = {})
-        : write_ascii(IsAscii(write_ascii)),
+    : format(format),
+          write_ascii(IsAscii(write_ascii)),
           compressed(Compressed(compressed)),
           print_progress(print_progress),
           update_progress(update_progress){};
@@ -114,6 +118,9 @@ struct WritePointCloudOption {
         : WritePointCloudOption() {
         update_progress = up;
     };
+    /// Specifies what format the contents of the file are (and what loader to
+    /// use), default "auto" means to go off of file extension.
+    std::string format;
     /// Whether to save in Ascii or Binary.  Some savers are capable of doing
     /// either, other ignore this.
     IsAscii write_ascii;
